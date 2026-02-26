@@ -1,13 +1,17 @@
 """
-Vercel serverless entry point — delegates to the existing FastAPI app.
-The working directory on Vercel is the repo root, so we reference the
-backend package via sys.path manipulation.
+Vercel Serverless Entry Point for Family Tree FastAPI Backend
 """
 import sys
 import os
 
-# Make the backend folder importable
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
+# Add backend directory to Python path
+# On Vercel: __file__ = /vercel/path0/api/index.py
+# backend dir = /vercel/path0/backend/
+backend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "backend")
+sys.path.insert(0, os.path.abspath(backend_dir))
 
-# Import the FastAPI app from backend/main.py
-from main import app  # noqa: F401  (Vercel looks for `app`)
+# Also set working directory so SQLite path resolves correctly
+os.chdir(os.path.abspath(backend_dir))
+
+# Now import the FastAPI app
+from main import app  # noqa: F401
