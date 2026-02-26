@@ -1,0 +1,6 @@
+fastapi
+sqlalchemy>=2.0
+python-dotenv
+pydantic
+python-multipart
+python-jose[cryptography]

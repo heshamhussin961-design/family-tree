@@ -10,8 +10,8 @@ build/
 .env
 *.log
 
-# ── Database (SENSITIVE — never commit) ───────────────────
-backend/family_tree.db
+# ── Database ─────────────────────────────────────────────
+# backend/family_tree.db   ← نرفعها عشان Vercel يشوف البيانات
 backend/uploads/
 
 # ── Node / Frontend ───────────────────────────────────────

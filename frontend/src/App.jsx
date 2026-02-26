@@ -7,7 +7,8 @@ import MembersList from "./components/MembersList.jsx";
 import TreeView from "./components/TreeView.jsx";
 import LoginPage from "./components/LoginPage.jsx";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080";
+const API_BASE = import.meta.env.VITE_API_BASE ||
+  (window.location.hostname === "localhost" ? "http://localhost:8080" : "/api");
 
 /* Pages: "dashboard" | "tree" | "search" | "add" | "profile" */
 export default function App() {
