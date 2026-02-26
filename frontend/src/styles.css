@@ -1,0 +1,230 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base ─────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  direction: rtl;
+  font-family: "Cairo", system-ui, sans-serif;
+  background: linear-gradient(135deg, #0f1b14 0%, #132218 40%, #0a1a10 100%);
+  min-height: 100vh;
+  color: #e8f0eb;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2d7a4f;
+  border-radius: 99px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3d9e66;
+}
+
+/* ── Glass Card ───────────────────────────────────────────── */
+@layer components {
+  .glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 1.25rem;
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 1.25rem;
+  }
+
+  .btn-primary {
+    @apply px-6 py-2.5 rounded-full font-bold text-sm text-white transition-all duration-200 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed;
+    background: linear-gradient(135deg, #2d7a4f, #1a5c36);
+    box-shadow: 0 4px 20px rgba(45, 122, 79, 0.35);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(45, 122, 79, 0.55);
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-xl text-sm outline-none transition-all duration-200;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #e8f0eb;
+  }
+
+  .input-field::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .input-field:focus {
+    border-color: #2d7a4f;
+    box-shadow: 0 0 0 3px rgba(45, 122, 79, 0.25);
+    background: rgba(255, 255, 255, 0.09);
+  }
+
+  .section-title {
+    @apply text-sm font-bold uppercase tracking-widest mb-4;
+    color: #4db878;
+  }
+}
+
+/* ── Animations ───────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.45s ease-out both;
+}
+
+/* ── Family Tree Layout ─────────────────────────────────── */
+/* Force LTR on the tree so CSS left/right work correctly.
+   Individual text labels set direction:rtl inline.           */
+.ft-tree {
+  display: inline-flex;
+  justify-content: flex-start;
+  direction: ltr;
+  /* KEY FIX for RTL pages */
+  padding: 0 48px 48px 48px;
+  min-width: 100%;
+}
+
+.ft-node {
+  text-align: center;
+  position: relative;
+  padding: 24px 12px 0 12px;
+}
+
+/* ─ Horizontal connectors (::before = left half, ::after = right half + vertical) ─ */
+.ft-node::before,
+.ft-node::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 24px;
+  border-top: 2px solid rgba(45, 122, 79, 0.45);
+}
+
+.ft-node::before {
+  left: 0;
+}
+
+.ft-node::after {
+  left: 50%;
+  border-left: 2px solid rgba(45, 122, 79, 0.45);
+}
+
+/* ─ Single child → no horizontal bar, only vertical drop ─ */
+.ft-children>.ft-node:only-child::before,
+.ft-children>.ft-node:only-child::after {
+  display: none;
+}
+
+.ft-children>.ft-node:only-child {
+  padding-top: 0;
+}
+
+/* ─ First child: remove LEFT horizontal bar ─ */
+.ft-children>.ft-node:first-child::before {
+  border: 0 none;
+}
+
+/* ─ Last child: remove RIGHT horizontal bar, keep vertical ─ */
+.ft-children>.ft-node:last-child::after {
+  border-top: 0 none;
+}
+
+/* ─ Person block: vertical line going DOWN ─ */
+.ft-person {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 24px;
+}
+
+.ft-person::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 24px;
+  background: rgba(45, 122, 79, 0.45);
+  z-index: 1;
+}
+
+/* ─ No children → remove the vertical drop ─ */
+.ft-node:not(:has(.ft-children))>.ft-person {
+  padding-bottom: 0;
+}
+
+.ft-node:not(:has(.ft-children))>.ft-person::after {
+  display: none;
+}
+
+/* ─ Children container ─ */
+.ft-children {
+  display: flex;
+  justify-content: center;
+}
+
+/* ─ Root nodes: no connectors above ─ */
+.ft-tree>.ft-node {
+  padding-top: 0;
+}
+
+.ft-tree>.ft-node::before,
+.ft-tree>.ft-node::after {
+  display: none;
+}
