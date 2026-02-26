@@ -67,9 +67,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-UPLOADS_DIR = Path(__file__).resolve().parent / "uploads"
+# On Vercel the task filesystem is read-only; use /tmp for writable storage
+if os.getenv("VERCEL") or not os.access(Path(__file__).resolve().parent, os.W_OK):
+    UPLOADS_DIR = Path("/tmp/uploads")
+else:
+    UPLOADS_DIR = Path(__file__).resolve().parent / "uploads"
+
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+
+# Only mount static files if the directory is accessible
+try:
+    app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
+except Exception:
+    pass  # If /tmp/uploads is empty, StaticFiles may fail — ignore on cold start
 
 
 # ── Helper ────────────────────────────────────────────────────────────────────
