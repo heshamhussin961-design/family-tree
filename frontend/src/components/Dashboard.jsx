@@ -7,7 +7,7 @@ const STAT_CARDS = [
     { key: "generations", label: "عدد الأجيال", icon: "🌿", color: "#f59e0b", bg: "rgba(245,158,11,0.10)" },
 ];
 
-export default function Dashboard({ apiBase, onViewTree, isAdmin, onLogout }) {
+export default function Dashboard({ apiBase, onViewTree, onViewArchive, isAdmin, onLogout }) {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -38,8 +38,8 @@ export default function Dashboard({ apiBase, onViewTree, isAdmin, onLogout }) {
                             <span className="text-2xl">🌳</span>
                         </div>
                         <div>
-                            <h1 className="text-xl font-black" style={{ color: "#e8f5ec" }}>شجرة عائلة البيطار</h1>
-                            <p className="text-xs" style={{ color: "rgba(232,240,235,0.4)" }}>سجل أنساب عائلة البيطار الرقمي</p>
+                            <h1 className="text-xl font-black" style={{ color: "#e8f5ec" }}>شجرة أنساب آل أبوعلي البيطار</h1>
+                            <p className="text-xs" style={{ color: "rgba(232,240,235,0.4)" }}>سجل أنساب آل أبوعلي البيطار الرقمي</p>
                         </div>
                     </div>
                     {isAdmin && (
@@ -58,7 +58,7 @@ export default function Dashboard({ apiBase, onViewTree, isAdmin, onLogout }) {
 
                 {/* Hero */}
                 <div className="mb-10 animate-fade-in-up">
-                    <h2 className="text-4xl font-black mb-2" style={{ color: "#e8f5ec" }}>سجل أنساب عائلة البيطار</h2>
+                    <h2 className="text-4xl font-black mb-2" style={{ color: "#e8f5ec" }}>سجل أنساب آل أبوعلي البيطار</h2>
                     <p className="text-base" style={{ color: "rgba(232,240,235,0.45)" }}>حفظ التراث العائلي عبر الأجيال</p>
                 </div>
 
@@ -82,12 +82,12 @@ export default function Dashboard({ apiBase, onViewTree, isAdmin, onLogout }) {
                 </div>
 
                 {/* View Tree */}
-                <div className="rounded-2xl p-5 flex items-center justify-between animate-fade-in-up"
+                <div className="rounded-2xl p-5 flex items-center justify-between animate-fade-in-up mb-4"
                     style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
                     <div className="flex items-center gap-3">
                         <span className="text-2xl">🌳</span>
                         <div>
-                            <div className="font-bold text-sm" style={{ color: "#e8f5ec" }}>شجرة عائلة البيطار</div>
+                            <div className="font-bold text-sm" style={{ color: "#e8f5ec" }}>شجرة أنساب آل أبوعلي البيطار</div>
                             <div className="text-xs" style={{ color: "rgba(232,240,235,0.35)" }}>استعراض النسب كاملاً</div>
                         </div>
                     </div>
@@ -95,6 +95,23 @@ export default function Dashboard({ apiBase, onViewTree, isAdmin, onLogout }) {
                         className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all hover:opacity-80"
                         style={{ background: "linear-gradient(135deg,#2d7a4f,#1a5c36)", color: "#fff" }}>
                         استعراض <span style={{ fontSize: "16px" }}>→</span>
+                    </button>
+                </div>
+
+                {/* تراث العائلة */}
+                <div className="rounded-2xl p-5 flex items-center justify-between animate-fade-in-up"
+                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                    <div className="flex items-center gap-3">
+                        <span className="text-2xl">📚</span>
+                        <div>
+                            <div className="font-bold text-sm" style={{ color: "#e8f5ec" }}>تراث العائلة</div>
+                            <div className="text-xs" style={{ color: "rgba(232,240,235,0.35)" }}>صور شخصيات · مستندات · رسائل · قصص وروايات</div>
+                        </div>
+                    </div>
+                    <button onClick={onViewArchive}
+                        className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all hover:opacity-80"
+                        style={{ background: "linear-gradient(135deg,#2d7a4f,#1a5c36)", color: "#fff" }}>
+                        عرض <span style={{ fontSize: "16px" }}>→</span>
                     </button>
                 </div>
 

@@ -122,7 +122,7 @@ export default function AddMemberForm({ apiBase, onSuccess, parentPerson }) {
 
       <div className="mb-6">
         <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#4db878" }}>إضافة فرد</div>
-        <h2 className="text-xl font-black" style={{ color: "#e8f5ec" }}>تسجيل في سجل عائلة البيطار</h2>
+        <h2 className="text-xl font-black" style={{ color: "#e8f5ec" }}>تسجيل في سجل آل أبوعلي البيطار</h2>
         {parentPerson && (
           <div className="mt-2 px-3 py-1.5 rounded-xl text-sm inline-flex items-center gap-2"
             style={{ background: "rgba(45,122,79,0.15)", border: "1px solid rgba(45,122,79,0.3)", color: "#4db878" }}>

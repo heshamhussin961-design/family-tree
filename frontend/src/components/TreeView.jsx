@@ -135,7 +135,7 @@ export default function TreeView({ apiBase, token, isAdmin, rootPerson, onAddMem
         <div>
             <div className="flex items-center justify-between mb-5" style={{ direction: "rtl" }}>
                 <div>
-                    <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#4db878" }}>🌳 شجرة عائلة البيطار</div>
+                    <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#4db878" }}>🌳 شجرة أنساب آل أبوعلي البيطار</div>
                     <p className="text-xs" style={{ color: "rgba(232,240,235,0.35)" }}>
                         الشجرة مفتوحة بالكامل — كل الأجيال ظاهرة
                         {isAdmin && " · اضغط على الدايرة للتعديل"}

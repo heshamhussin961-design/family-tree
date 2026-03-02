@@ -72,6 +72,21 @@ body {
     color: #e8f0eb;
   }
 
+  /* تخصيص المظهر لعناصر select بما يناسب ألوان الموقع */
+  select.input-field {
+    background: rgba(10, 26, 16, 0.96);
+    border-color: #2d7a4f;
+    color: #e8f0eb;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  select.input-field option {
+    background-color: #132218;
+    color: #e8f0eb;
+  }
+
   .input-field::placeholder {
     color: rgba(255, 255, 255, 0.3);
   }

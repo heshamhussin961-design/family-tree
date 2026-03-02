@@ -42,7 +42,7 @@ export default function LoginPage({ apiBase, onLogin, onCancel }) {
                         style={{ background: "linear-gradient(135deg,#2d7a4f,#1a5c36)" }}>
                         <span className="text-4xl">🌳</span>
                     </div>
-                    <h1 className="text-2xl font-black" style={{ color: "#e8f5ec" }}>شجرة عائلة البيطار</h1>
+                    <h1 className="text-2xl font-black" style={{ color: "#e8f5ec" }}>شجرة أنساب آل أبوعلي البيطار</h1>
                     <p className="text-sm mt-1" style={{ color: "rgba(232,240,235,0.45)" }}>تسجيل الدخول للوحة الأدمن</p>
                 </div>
 

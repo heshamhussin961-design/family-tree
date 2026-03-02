@@ -6,6 +6,7 @@ import AddMemberForm from "./components/AddMemberForm.jsx";
 import MembersList from "./components/MembersList.jsx";
 import TreeView from "./components/TreeView.jsx";
 import LoginPage from "./components/LoginPage.jsx";
+import FamilyArchive from "./components/FamilyArchive.jsx";
 
 const API_BASE = import.meta.env.VITE_API_BASE ||
   (window.location.hostname === "localhost" ? "http://localhost:8080" : "/api");
@@ -65,6 +66,7 @@ export default function App() {
   const TABS = [
     { key: "dashboard", label: "🏠 الرئيسية" },
     { key: "tree", label: "🌳 الشجرة" },
+    { key: "archive", label: "📚 تراث العائلة" },
     { key: "search", label: "🔍 بحث" },
     { key: "add", label: "➕ إضافة" },
   ];
@@ -78,6 +80,7 @@ export default function App() {
         onAdminLogin={() => setShowAdminLogin(true)}
         onViewTree={() => setPage("tree")}
         onViewSearch={() => setPage("search")}
+        onViewArchive={() => setPage("archive")}
         onAddMember={() => { setParentPerson(null); setPage("add"); }}
       />
     );
@@ -98,7 +101,7 @@ export default function App() {
               style={{ background: "linear-gradient(135deg,#2d7a4f,#1a5c36)" }}>
               <span className="text-xl">🌳</span>
             </div>
-            <h1 className="text-lg font-black" style={{ color: "#e8f5ec" }}>شجرة عائلة البيطار</h1>
+            <h1 className="text-lg font-black" style={{ color: "#e8f5ec" }}>شجرة أنساب آل أبوعلي البيطار</h1>
           </button>
 
           <div className="flex items-center gap-2">
@@ -163,6 +166,13 @@ export default function App() {
           </div>
         )}
 
+        {/* ── تراث العائلة ── */}
+        {page === "archive" && (
+          <div className="animate-fade-in-up">
+            <FamilyArchive isAdmin={isAdmin} />
+          </div>
+        )}
+
         {/* ── Search ── */}
         {page === "search" && (
           <div className="animate-fade-in-up space-y-5">
@@ -201,7 +211,7 @@ export default function App() {
           <div className="animate-fade-in-up">
             <div className="mb-5 p-4 rounded-xl text-sm"
               style={{ background: "rgba(45,122,79,0.1)", border: "1px solid rgba(45,122,79,0.2)", color: "rgba(232,240,235,0.7)" }}>
-              📝 أي فرد من عائلة البيطار يقدر يضيف نفسه هنا
+              📝 أي فرد من آل أبوعلي البيطار يقدر يضيف نفسه هنا
             </div>
             <AddMemberForm
               apiBase={API_BASE}
@@ -215,7 +225,7 @@ export default function App() {
         )}
 
         <footer className="mt-14 text-center text-xs" style={{ color: "rgba(232,240,235,0.12)" }}>
-          سجل أنساب عائلة البيطار الرقمي · {new Date().getFullYear()}
+          سجل أنساب آل أبوعلي البيطار الرقمي · {new Date().getFullYear()}
         </footer>
       </div>
     </div>
