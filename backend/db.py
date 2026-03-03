@@ -6,19 +6,20 @@ from sqlalchemy.orm import sessionmaker, declarative_base, Session
 
 load_dotenv()
 
-default_sqlite_path = Path(__file__).resolve().parent / "family_tree.db"
-env_url = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-# نُجبر التطبيق حاليًا على استخدام SQLite ملف محلي
-if env_url and env_url.startswith("sqlite"):
-    DATABASE_URL = env_url
-else:
+if not DATABASE_URL:
+    default_sqlite_path = Path(__file__).resolve().parent / "family_tree.db"
     DATABASE_URL = f"sqlite:///{default_sqlite_path}"
+
+connect_args = {}
+if DATABASE_URL.startswith("sqlite"):
+    connect_args["check_same_thread"] = False
 
 engine = create_engine(
     DATABASE_URL,
     future=True,
-    connect_args={"check_same_thread": False},
+    connect_args=connect_args,
 )
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
 
@@ -31,4 +32,3 @@ def get_db():
         yield db
     finally:
         db.close()
-
