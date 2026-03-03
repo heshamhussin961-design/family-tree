@@ -15,6 +15,7 @@ body {
   background: linear-gradient(135deg, #0f1b14 0%, #132218 40%, #0a1a10 100%);
   min-height: 100vh;
   color: #e8f0eb;
+  overflow-x: hidden;
 }
 
 /* ── Scrollbar ────────────────────────────────────────────── */
@@ -72,7 +73,6 @@ body {
     color: #e8f0eb;
   }
 
-  /* تخصيص المظهر لعناصر select بما يناسب ألوان الموقع */
   select.input-field {
     background: rgba(10, 26, 16, 0.96);
     border-color: #2d7a4f;
@@ -107,12 +107,55 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(24px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
@@ -120,7 +163,6 @@ body {
   0% {
     background-position: -200% center;
   }
-
   100% {
     background-position: 200% center;
   }
@@ -131,25 +173,161 @@ body {
     transform: scale(1);
     opacity: 0.6;
   }
-
   100% {
     transform: scale(1.6);
     opacity: 0;
   }
 }
 
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(45, 122, 79, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(45, 122, 79, 0.45);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes blob-morph {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+  50% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+  }
+}
+
 .animate-fade-in-up {
-  animation: fadeInUp 0.45s ease-out both;
+  animation: fadeInUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-fade-in-scale {
+  animation: fadeInScale 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-blob {
+  animation: blob-morph 8s ease-in-out infinite;
+}
+
+/* Stagger delays for children */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.3s; }
+.stagger-7 { animation-delay: 0.35s; }
+.stagger-8 { animation-delay: 0.4s; }
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Card shine effect on hover */
+.card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), transparent);
+  transition: left 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-shine:hover::before {
+  left: 100%;
 }
 
 /* ── Family Tree Layout ─────────────────────────────────── */
-/* Force LTR on the tree so CSS left/right work correctly.
-   Individual text labels set direction:rtl inline.           */
 .ft-tree {
   display: inline-flex;
   justify-content: flex-start;
   direction: ltr;
-  /* KEY FIX for RTL pages */
   padding: 0 48px 48px 48px;
   min-width: 100%;
 }
@@ -160,7 +338,6 @@ body {
   padding: 24px 12px 0 12px;
 }
 
-/* ─ Horizontal connectors (::before = left half, ::after = right half + vertical) ─ */
 .ft-node::before,
 .ft-node::after {
   content: '';
@@ -180,7 +357,6 @@ body {
   border-left: 2px solid rgba(45, 122, 79, 0.45);
 }
 
-/* ─ Single child → no horizontal bar, only vertical drop ─ */
 .ft-children>.ft-node:only-child::before,
 .ft-children>.ft-node:only-child::after {
   display: none;
@@ -190,17 +366,14 @@ body {
   padding-top: 0;
 }
 
-/* ─ First child: remove LEFT horizontal bar ─ */
 .ft-children>.ft-node:first-child::before {
   border: 0 none;
 }
 
-/* ─ Last child: remove RIGHT horizontal bar, keep vertical ─ */
 .ft-children>.ft-node:last-child::after {
   border-top: 0 none;
 }
 
-/* ─ Person block: vertical line going DOWN ─ */
 .ft-person {
   position: relative;
   display: inline-block;
@@ -219,7 +392,6 @@ body {
   z-index: 1;
 }
 
-/* ─ No children → remove the vertical drop ─ */
 .ft-node:not(:has(.ft-children))>.ft-person {
   padding-bottom: 0;
 }
@@ -228,13 +400,11 @@ body {
   display: none;
 }
 
-/* ─ Children container ─ */
 .ft-children {
   display: flex;
   justify-content: center;
 }
 
-/* ─ Root nodes: no connectors above ─ */
 .ft-tree>.ft-node {
   padding-top: 0;
 }
@@ -242,4 +412,24 @@ body {
 .ft-tree>.ft-node::before,
 .ft-tree>.ft-node::after {
   display: none;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .ft-tree {
+    padding: 0 16px 32px 16px;
+  }
+
+  .ft-node {
+    padding: 16px 4px 0 4px;
+  }
+
+  .ft-person::after {
+    height: 16px;
+  }
+
+  .ft-node::before,
+  .ft-node::after {
+    height: 16px;
+  }
 }

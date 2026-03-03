@@ -42,15 +42,31 @@ def create_token(data: dict) -> str:
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login", auto_error=False)
 
+
+def _decode_token_role(token: str) -> Optional[str]:
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload.get("role")
+    except JWTError:
+        return None
+
+
 def get_current_admin(token: str = Depends(oauth2_scheme)):
     if not token:
         raise HTTPException(status_code=401, detail="غير مسموح — سجّل دخول أولاً")
-    try:
-        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
-        if payload.get("role") != "admin":
-            raise HTTPException(status_code=403, detail="صلاحيات الأدمن مطلوبة")
-    except JWTError:
-        raise HTTPException(status_code=401, detail="توكن غير صالح")
+    role = _decode_token_role(token)
+    if role != "admin":
+        raise HTTPException(status_code=403, detail="صلاحيات الأدمن مطلوبة")
+
+
+def is_admin_request(token: Optional[str] = Depends(oauth2_scheme)) -> bool:
+    """
+    Helper used في Endpoints القراءة: يحدد إن كان الطلب صادر من أدمن أم لا
+    بدون ما يرجّع 401 لو مفيش توكن.
+    """
+    if not token:
+        return False
+    return _decode_token_role(token) == "admin"
 
 
 # ── App ───────────────────────────────────────────────────────────────────────
@@ -90,27 +106,31 @@ def get_member_or_404(db: Session, member_id: int) -> FamilyMember:
     return m
 
 
-def get_lineage(db: Session, member_id: int):
+def get_lineage(db: Session, member_id: int, hide_females: bool):
     query = text("""
         WITH RECURSIVE ancestors(id, full_name, branch_name, parent_id,
                                  image_url, gender, birth_year, death_year,
-                                 email, phone, is_alive) AS (
+                                 email, phone, is_alive, blood_type, health_notes) AS (
             SELECT id, full_name, branch_name, parent_id,
                    image_url, gender, birth_year, death_year,
-                   email, phone, is_alive
+                   email, phone, is_alive, blood_type, health_notes
             FROM family_members
             WHERE id = :member_id
             UNION ALL
             SELECT fm.id, fm.full_name, fm.branch_name, fm.parent_id,
                    fm.image_url, fm.gender, fm.birth_year, fm.death_year,
-                   fm.email, fm.phone, fm.is_alive
+                   fm.email, fm.phone, fm.is_alive, fm.blood_type, fm.health_notes
             FROM family_members fm
             JOIN ancestors a ON fm.id = a.parent_id
         )
         SELECT * FROM ancestors
     """)
     rows = db.execute(query, {"member_id": member_id}).fetchall()
-    return list(reversed(rows))
+    # Reverse to get from root → الشخص الحالي
+    lineage = list(reversed(rows))
+    if hide_females:
+        lineage = [r for r in lineage if r[5] != "female"]
+    return lineage
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -156,10 +176,16 @@ def get_stats(db: Session = Depends(get_db)):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @app.get("/search", response_model=List[SearchResult])
-def search_members(q: str = Query(..., min_length=1), limit: int = 20, db: Session = Depends(get_db)):
+def search_members(
+    q: str = Query(..., min_length=1),
+    limit: int = 20,
+    db: Session = Depends(get_db),
+    is_admin: bool = Depends(is_admin_request),
+):
     members = (
         db.query(FamilyMember)
         .filter(FamilyMember.full_name.contains(q))
+        .filter(FamilyMember.gender != "female" if not is_admin else True)
         .limit(limit)
         .all()
     )
@@ -167,9 +193,14 @@ def search_members(q: str = Query(..., min_length=1), limit: int = 20, db: Sessi
 
 
 @app.get("/members", response_model=List[SearchResult])
-def list_members(limit: int = 500, db: Session = Depends(get_db)):
+def list_members(
+    limit: int = 500,
+    db: Session = Depends(get_db),
+    is_admin: bool = Depends(is_admin_request),
+):
     members = (
         db.query(FamilyMember)
+        .filter(FamilyMember.gender != "female" if not is_admin else True)
         .order_by(FamilyMember.full_name.asc())
         .limit(limit)
         .all()
@@ -178,15 +209,33 @@ def list_members(limit: int = 500, db: Session = Depends(get_db)):
 
 
 @app.get("/person/{member_id}", response_model=LineageResponse)
-def get_person(member_id: int, db: Session = Depends(get_db)):
+def get_person(
+    member_id: int,
+    db: Session = Depends(get_db),
+    is_admin: bool = Depends(is_admin_request),
+):
     person = get_member_or_404(db, member_id)
-    lineage_rows = get_lineage(db, member_id)
+    # لو الطلب مش أدمن والشخص أنثى → إخفاء
+    if not is_admin and person.gender == "female":
+        raise HTTPException(status_code=404, detail="الشخص غير موجود")
+
+    lineage_rows = get_lineage(db, member_id, hide_females=not is_admin)
 
     def row_to_schema(row):
         return SearchResult(
-            id=row[0], full_name=row[1], branch_name=row[2], parent_id=row[3],
-            image_url=row[4], gender=row[5], birth_year=row[6], death_year=row[7],
-            email=row[8], phone=row[9], is_alive=bool(row[10]) if row[10] is not None else True,
+            id=row[0],
+            full_name=row[1],
+            branch_name=row[2],
+            parent_id=row[3],
+            image_url=row[4],
+            gender=row[5],
+            birth_year=row[6],
+            death_year=row[7],
+            email=row[8],
+            phone=row[9],
+            is_alive=bool(row[10]) if row[10] is not None else True,
+            blood_type=row[11],
+            health_notes=row[12],
         )
 
     return LineageResponse(
@@ -196,11 +245,16 @@ def get_person(member_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/children/{member_id}", response_model=List[SearchResult])
-def get_children(member_id: int, db: Session = Depends(get_db)):
+def get_children(
+    member_id: int,
+    db: Session = Depends(get_db),
+    is_admin: bool = Depends(is_admin_request),
+):
     get_member_or_404(db, member_id)
     children = (
         db.query(FamilyMember)
         .filter(FamilyMember.parent_id == member_id)
+        .filter(FamilyMember.gender != "female" if not is_admin else True)
         .order_by(FamilyMember.full_name)
         .all()
     )
@@ -208,10 +262,15 @@ def get_children(member_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/roots", response_model=List[SearchResult])
-def get_roots(limit: int = 20, db: Session = Depends(get_db)):
+def get_roots(
+    limit: int = 20,
+    db: Session = Depends(get_db),
+    is_admin: bool = Depends(is_admin_request),
+):
     roots = (
         db.query(FamilyMember)
         .filter(FamilyMember.parent_id == None)
+        .filter(FamilyMember.gender != "female" if not is_admin else True)
         .order_by(FamilyMember.full_name)
         .limit(limit)
         .all()

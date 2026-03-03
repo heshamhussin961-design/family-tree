@@ -3,17 +3,19 @@ from pydantic import BaseModel, Field
 
 
 class FamilyMemberBase(BaseModel):
-    id:          int
-    full_name:   str
-    branch_name: Optional[str] = None
-    parent_id:   Optional[int] = None
-    image_url:   Optional[str] = None
-    gender:      Optional[str] = None
-    birth_year:  Optional[int] = None
-    death_year:  Optional[int] = None
-    email:       Optional[str] = None
-    phone:       Optional[str] = None
-    is_alive:    bool = True
+    id:           int
+    full_name:    str
+    branch_name:  Optional[str] = None
+    parent_id:    Optional[int] = None
+    image_url:    Optional[str] = None
+    gender:       Optional[str] = None
+    birth_year:   Optional[int] = None
+    death_year:   Optional[int] = None
+    email:        Optional[str] = None
+    phone:        Optional[str] = None
+    is_alive:     bool = True
+    blood_type:   Optional[str] = None
+    health_notes: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
@@ -32,28 +34,32 @@ class LineageResponse(BaseModel):
 
 
 class FamilyMemberCreate(BaseModel):
-    full_name:   str           = Field(..., min_length=2, max_length=120)
-    branch_name: Optional[str] = Field(None, max_length=80)
-    parent_id:   Optional[int] = Field(None, ge=1)
-    gender:      Optional[str] = Field(None, pattern="^(male|female)$")
-    birth_year:  Optional[int] = Field(None, ge=1300, le=2100)
-    death_year:  Optional[int] = Field(None, ge=1300, le=2100)
-    email:       Optional[str] = Field(None, max_length=120)
-    phone:       Optional[str] = Field(None, max_length=30)
-    is_alive:    bool          = True
+    full_name:    str           = Field(..., min_length=2, max_length=120)
+    branch_name:  Optional[str] = Field(None, max_length=80)
+    parent_id:    Optional[int] = Field(None, ge=1)
+    gender:       Optional[str] = Field(None, pattern="^(male|female)$")
+    birth_year:   Optional[int] = Field(None, ge=1300, le=2100)
+    death_year:   Optional[int] = Field(None, ge=1300, le=2100)
+    email:        Optional[str] = Field(None, max_length=120)
+    phone:        Optional[str] = Field(None, max_length=30)
+    is_alive:     bool          = True
+    blood_type:   Optional[str] = Field(None, max_length=8)
+    health_notes: Optional[str] = Field(None, max_length=500)
 
 
 class FamilyMemberUpdate(BaseModel):
     """All fields optional — only provided fields get updated."""
-    full_name:   Optional[str] = Field(None, min_length=2, max_length=120)
-    branch_name: Optional[str] = Field(None, max_length=80)
-    parent_id:   Optional[int] = None
-    gender:      Optional[str] = Field(None, pattern="^(male|female)$")
-    birth_year:  Optional[int] = Field(None, ge=1300, le=2100)
-    death_year:  Optional[int] = Field(None, ge=1300, le=2100)
-    email:       Optional[str] = Field(None, max_length=120)
-    phone:       Optional[str] = Field(None, max_length=30)
-    is_alive:    Optional[bool] = None
+    full_name:    Optional[str] = Field(None, min_length=2, max_length=120)
+    branch_name:  Optional[str] = Field(None, max_length=80)
+    parent_id:    Optional[int] = None
+    gender:       Optional[str] = Field(None, pattern="^(male|female)$")
+    birth_year:   Optional[int] = Field(None, ge=1300, le=2100)
+    death_year:   Optional[int] = Field(None, ge=1300, le=2100)
+    email:        Optional[str] = Field(None, max_length=120)
+    phone:        Optional[str] = Field(None, max_length=30)
+    is_alive:     Optional[bool] = None
+    blood_type:   Optional[str] = Field(None, max_length=8)
+    health_notes: Optional[str] = Field(None, max_length=500)
 
 
 class LoginRequest(BaseModel):

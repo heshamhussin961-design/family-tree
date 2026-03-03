@@ -131,9 +131,11 @@ export default function FamilyArchive({ isAdmin }) {
   return (
     <div className="animate-fade-in-up space-y-6">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-3"
-          style={{ background: "linear-gradient(135deg,#2d7a4f,#1a5c36)" }}>
-          <span className="text-2xl">📚</span>
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-3 animate-glow-pulse"
+          style={{ background: "linear-gradient(135deg,#2d7a4f,#1a5c36)", color: "#fff" }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" /><path d="M8 7h6" /><path d="M8 11h8" />
+          </svg>
         </div>
         <h2 className="text-2xl font-black mb-1" style={{ color: "#e8f5ec" }}>
           تراث آل أبوعلي البيطار
@@ -141,6 +143,39 @@ export default function FamilyArchive({ isAdmin }) {
         <p className="text-sm" style={{ color: "rgba(232,240,235,0.5)" }}>
           صور شخصيات · مستندات قديمة · رسائل · قصص وروايات تعبر عن تاريخ العائلة
         </p>
+      </div>
+
+      {/* السجل الورقي الرسمي */}
+      <div
+        className="rounded-2xl p-5 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+        style={{
+          background: "rgba(10,26,16,0.9)",
+          border: "1px solid rgba(77,184,120,0.4)",
+        }}
+      >
+        <div className="flex items-start gap-3" style={{ direction: "rtl" }}>
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+            style={{ background: "rgba(77,184,120,0.18)" }}
+          >
+            📗
+          </div>
+          <div>
+            <div className="text-sm font-bold mb-0.5" style={{ color: "#4db878" }}>
+              السجل الورقي لعائلة آل أبوعلي البيطار
+            </div>
+            <p className="text-xs" style={{ color: "rgba(232,240,235,0.7)" }}>
+              الاعتماد على ملف السجل:
+              {" "}
+              <strong>FAMILY-TREE/6سجل آل أبوعلي البيطار (1) (1).xls</strong>
+              {" "}
+              كمصدر أساسي في إدخال بيانات الشجرة الرقمية.
+            </p>
+          </div>
+        </div>
+        <div className="text-[11px] md:text-xs" style={{ color: "rgba(232,240,235,0.45)" }}>
+          يحتفظ الديوان بالنسخة الأصلية، وهذه النسخة الرقمية مبنية عليها.
+        </div>
       </div>
 
       {/* لوحة رفع محتوى الأرشيف — تظهر للأدمن فقط */}
