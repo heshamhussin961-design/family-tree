@@ -16,5 +16,9 @@ class FamilyMember(Base):
     email        = Column(String, nullable=True)
     phone        = Column(String, nullable=True)
     is_alive     = Column(Boolean, default=True, nullable=False)
-    blood_type   = Column(String, nullable=True)   # فصيلة الدم (مثال: A+, O-)
-    health_notes = Column(String, nullable=True)   # ملاحظات صحية مختصرة
+    blood_type        = Column(String, nullable=True)
+    profession        = Column(String, nullable=True)   # المهنة
+    university_degree = Column(String, nullable=True)   # المؤهل الجامعي
+    job_title         = Column(String, nullable=True)   # الوظيفة
+    is_student        = Column(Boolean, default=False)
+    looking_for_job   = Column(Boolean, default=False)

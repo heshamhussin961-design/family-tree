@@ -65,8 +65,8 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
             </span>
           </div>
 
-          {(person.birth_year || person.death_year || person.blood_type || person.health_notes) && (
-            <div className="grid grid-cols-2 gap-2 mb-3 max-w-sm mx-auto md:mx-0">
+          {(person.birth_year || person.death_year || person.blood_type || person.profession || person.university_degree || person.job_title) && (
+            <div className="grid grid-cols-2 gap-2 mb-3 max-w-md mx-auto md:mx-0">
               {person.birth_year && (
                 <div className="card p-3 text-center">
                   <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>سنة الميلاد</div>
@@ -85,12 +85,31 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
                   <div className="text-base font-black" style={{ color: "#ef4444" }}>{person.blood_type}</div>
                 </div>
               )}
-              {person.health_notes && (
-                <div className="card p-3 text-right col-span-2 md:col-span-1">
-                  <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>ملاحظات صحية</div>
-                  <div className="text-xs" style={{ color: "var(--text-secondary)" }}>{person.health_notes}</div>
+              {person.profession && (
+                <div className="card p-3 text-center">
+                  <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>المهنة</div>
+                  <div className="text-sm font-bold" style={{ color: "var(--accent)" }}>{person.profession}</div>
                 </div>
               )}
+              {person.university_degree && (
+                <div className="card p-3 text-center">
+                  <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>المؤهل الجامعي</div>
+                  <div className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{person.university_degree}</div>
+                </div>
+              )}
+              {person.job_title && (
+                <div className="card p-3 text-center">
+                  <div className="text-[10px]" style={{ color: "var(--text-muted)" }}>الوظيفة</div>
+                  <div className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>{person.job_title}</div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {(person.is_student || person.looking_for_job) && (
+            <div className="flex flex-wrap gap-1.5 justify-center md:justify-start mb-3">
+              {person.is_student && <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold" style={{ background: "var(--primary-dim)", color: "var(--primary)" }}>طالب</span>}
+              {person.looking_for_job && <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold" style={{ background: "var(--accent-dim)", color: "var(--accent)" }}>يبحث عن عمل</span>}
             </div>
           )}
 

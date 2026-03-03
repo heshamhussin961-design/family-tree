@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 
-const EMPTY = { full_name: "", branch_name: "", gender: "", birth_year: "", email: "", phone: "", blood_type: "", health_notes: "" };
+const EMPTY = { full_name: "", branch_name: "", gender: "", birth_year: "", email: "", phone: "", blood_type: "", profession: "", university_degree: "", job_title: "", is_student: false, looking_for_job: false };
 
 export default function AddMemberForm({ apiBase, onSuccess, parentPerson }) {
   const [form, setForm] = useState(EMPTY);
@@ -32,7 +32,7 @@ export default function AddMemberForm({ apiBase, onSuccess, parentPerson }) {
   const handleSubmit = async (e) => {
     e.preventDefault(); setStatus(null); setLoading(true);
     try {
-      const payload = { full_name: form.full_name.trim(), branch_name: form.branch_name.trim() || null, parent_id: parentId || null, gender: form.gender || null, birth_year: form.birth_year ? parseInt(form.birth_year) : null, email: form.email.trim() || null, phone: form.phone.trim() || null, blood_type: form.blood_type.trim() || null, health_notes: form.health_notes.trim() || null };
+      const payload = { full_name: form.full_name.trim(), branch_name: form.branch_name.trim() || null, parent_id: parentId || null, gender: form.gender || null, birth_year: form.birth_year ? parseInt(form.birth_year) : null, email: form.email.trim() || null, phone: form.phone.trim() || null, blood_type: form.blood_type.trim() || null, profession: form.profession.trim() || null, university_degree: form.university_degree.trim() || null, job_title: form.job_title.trim() || null, is_student: !!form.is_student, looking_for_job: !!form.looking_for_job };
       const res = await fetch(`${apiBase}/members`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error();
       const newMember = await res.json();
@@ -102,9 +102,37 @@ export default function AddMemberForm({ apiBase, onSuccess, parentPerson }) {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>ملاحظات صحية</label>
-            <textarea name="health_notes" rows={2} value={form.health_notes} onChange={handleChange} className="input-field text-sm" placeholder="أمراض مزمنة، حساسية..." />
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>المهنة</label>
+            <input type="text" name="profession" value={form.profession} onChange={handleChange} placeholder="مثال: مهندس، طبيب..." className="input-field" />
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>المؤهل الجامعي</label>
+            <input type="text" name="university_degree" value={form.university_degree} onChange={handleChange} placeholder="مثال: بكالوريوس هندسة..." className="input-field" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>الوظيفة</label>
+            <input type="text" name="job_title" value={form.job_title} onChange={handleChange} placeholder="مثال: مدير مشاريع..." className="input-field" />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" name="is_student" checked={form.is_student} onChange={e => setForm(p => ({ ...p, is_student: e.target.checked }))} className="sr-only peer" />
+            <div className="w-9 h-5 rounded-full transition-colors relative" style={{ background: form.is_student ? "var(--primary)" : "#444" }}>
+              <div className="w-4 h-4 bg-white rounded-full shadow absolute top-0.5 transition-all" style={{ left: form.is_student ? "18px" : "2px" }} />
+            </div>
+            <span className="text-xs font-semibold" style={{ color: form.is_student ? "var(--primary)" : "var(--text-secondary)" }}>طالب</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" name="looking_for_job" checked={form.looking_for_job} onChange={e => setForm(p => ({ ...p, looking_for_job: e.target.checked }))} className="sr-only peer" />
+            <div className="w-9 h-5 rounded-full transition-colors relative" style={{ background: form.looking_for_job ? "var(--accent)" : "#444" }}>
+              <div className="w-4 h-4 bg-white rounded-full shadow absolute top-0.5 transition-all" style={{ left: form.looking_for_job ? "18px" : "2px" }} />
+            </div>
+            <span className="text-xs font-semibold" style={{ color: form.looking_for_job ? "var(--accent)" : "var(--text-secondary)" }}>يبحث عن عمل</span>
+          </label>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

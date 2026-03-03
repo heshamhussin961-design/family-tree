@@ -14,8 +14,12 @@ class FamilyMemberBase(BaseModel):
     email:        Optional[str] = None
     phone:        Optional[str] = None
     is_alive:     bool = True
-    blood_type:   Optional[str] = None
-    health_notes: Optional[str] = None
+    blood_type:        Optional[str]  = None
+    profession:        Optional[str]  = None
+    university_degree: Optional[str]  = None
+    job_title:         Optional[str]  = None
+    is_student:        bool           = False
+    looking_for_job:   bool           = False
 
     model_config = {"from_attributes": True}
 
@@ -43,23 +47,31 @@ class FamilyMemberCreate(BaseModel):
     email:        Optional[str] = Field(None, max_length=120)
     phone:        Optional[str] = Field(None, max_length=30)
     is_alive:     bool          = True
-    blood_type:   Optional[str] = Field(None, max_length=8)
-    health_notes: Optional[str] = Field(None, max_length=500)
+    blood_type:        Optional[str]  = Field(None, max_length=8)
+    profession:        Optional[str]  = Field(None, max_length=120)
+    university_degree: Optional[str]  = Field(None, max_length=120)
+    job_title:         Optional[str]  = Field(None, max_length=120)
+    is_student:        bool           = False
+    looking_for_job:   bool           = False
 
 
 class FamilyMemberUpdate(BaseModel):
     """All fields optional — only provided fields get updated."""
-    full_name:    Optional[str] = Field(None, min_length=2, max_length=120)
-    branch_name:  Optional[str] = Field(None, max_length=80)
-    parent_id:    Optional[int] = None
-    gender:       Optional[str] = Field(None, pattern="^(male|female)$")
-    birth_year:   Optional[int] = Field(None, ge=1300, le=2100)
-    death_year:   Optional[int] = Field(None, ge=1300, le=2100)
-    email:        Optional[str] = Field(None, max_length=120)
-    phone:        Optional[str] = Field(None, max_length=30)
-    is_alive:     Optional[bool] = None
-    blood_type:   Optional[str] = Field(None, max_length=8)
-    health_notes: Optional[str] = Field(None, max_length=500)
+    full_name:         Optional[str]  = Field(None, min_length=2, max_length=120)
+    branch_name:       Optional[str]  = Field(None, max_length=80)
+    parent_id:         Optional[int]  = None
+    gender:            Optional[str]  = Field(None, pattern="^(male|female)$")
+    birth_year:        Optional[int]  = Field(None, ge=1300, le=2100)
+    death_year:        Optional[int]  = Field(None, ge=1300, le=2100)
+    email:             Optional[str]  = Field(None, max_length=120)
+    phone:             Optional[str]  = Field(None, max_length=30)
+    is_alive:          Optional[bool] = None
+    blood_type:        Optional[str]  = Field(None, max_length=8)
+    profession:        Optional[str]  = Field(None, max_length=120)
+    university_degree: Optional[str]  = Field(None, max_length=120)
+    job_title:         Optional[str]  = Field(None, max_length=120)
+    is_student:        Optional[bool] = None
+    looking_for_job:   Optional[bool] = None
 
 
 class LoginRequest(BaseModel):

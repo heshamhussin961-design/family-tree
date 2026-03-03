@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 export default function EditMemberModal({ member, apiBase, token, onSave, onDelete, onClose }) {
-  const [form, setForm] = useState({ full_name: member.full_name || "", branch_name: member.branch_name || "", gender: member.gender || "", birth_year: member.birth_year || "", death_year: member.death_year || "", email: member.email || "", phone: member.phone || "", is_alive: member.is_alive !== false, blood_type: member.blood_type || "", health_notes: member.health_notes || "" });
+  const [form, setForm] = useState({ full_name: member.full_name || "", branch_name: member.branch_name || "", gender: member.gender || "", birth_year: member.birth_year || "", death_year: member.death_year || "", email: member.email || "", phone: member.phone || "", is_alive: member.is_alive !== false, blood_type: member.blood_type || "", profession: member.profession || "", university_degree: member.university_degree || "", job_title: member.job_title || "", is_student: !!member.is_student, looking_for_job: !!member.looking_for_job });
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -12,7 +12,7 @@ export default function EditMemberModal({ member, apiBase, token, onSave, onDele
   const handleSave = async () => {
     setError(""); setLoading(true);
     try {
-      const payload = { ...form, birth_year: form.birth_year ? parseInt(form.birth_year) : null, death_year: form.death_year ? parseInt(form.death_year) : null, gender: form.gender || null, branch_name: form.branch_name || null, email: form.email || null, phone: form.phone || null, blood_type: form.blood_type || null, health_notes: form.health_notes || null };
+      const payload = { ...form, birth_year: form.birth_year ? parseInt(form.birth_year) : null, death_year: form.death_year ? parseInt(form.death_year) : null, gender: form.gender || null, branch_name: form.branch_name || null, email: form.email || null, phone: form.phone || null, blood_type: form.blood_type || null, profession: form.profession || null, university_degree: form.university_degree || null, job_title: form.job_title || null, is_student: !!form.is_student, looking_for_job: !!form.looking_for_job };
       const res = await fetch(`${apiBase}/members/${member.id}`, { method: "PUT", headers, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error((await res.json()).detail || "خطأ");
       onSave(await res.json()); onClose();
@@ -51,7 +51,27 @@ export default function EditMemberModal({ member, apiBase, token, onSave, onDele
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>فصيلة الدم</label><select name="blood_type" value={form.blood_type} onChange={handleChange} className="input-field"><option value="">—</option><option value="A+">A+</option><option value="A-">A-</option><option value="B+">B+</option><option value="B-">B-</option><option value="AB+">AB+</option><option value="AB-">AB-</option><option value="O+">O+</option><option value="O-">O-</option></select></div>
-            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>ملاحظات صحية</label><input name="health_notes" value={form.health_notes} onChange={handleChange} className="input-field" placeholder="حساسية، أمراض..." /></div>
+            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>المهنة</label><input name="profession" value={form.profession} onChange={handleChange} className="input-field" placeholder="مهندس، طبيب..." /></div>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>المؤهل الجامعي</label><input name="university_degree" value={form.university_degree} onChange={handleChange} className="input-field" placeholder="بكالوريوس..." /></div>
+            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>الوظيفة</label><input name="job_title" value={form.job_title} onChange={handleChange} className="input-field" placeholder="مدير مشاريع..." /></div>
+          </div>
+          <div className="flex flex-wrap gap-4 py-1">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="is_student" checked={form.is_student} onChange={handleChange} className="sr-only peer" />
+              <div className="w-9 h-5 rounded-full transition-colors relative" style={{ background: form.is_student ? "var(--primary)" : "#444" }}>
+                <div className="w-4 h-4 bg-white rounded-full shadow absolute top-0.5 transition-all" style={{ left: form.is_student ? "18px" : "2px" }} />
+              </div>
+              <span className="text-xs font-semibold" style={{ color: form.is_student ? "var(--primary)" : "var(--text-secondary)" }}>طالب</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" name="looking_for_job" checked={form.looking_for_job} onChange={handleChange} className="sr-only peer" />
+              <div className="w-9 h-5 rounded-full transition-colors relative" style={{ background: form.looking_for_job ? "var(--accent)" : "#444" }}>
+                <div className="w-4 h-4 bg-white rounded-full shadow absolute top-0.5 transition-all" style={{ left: form.looking_for_job ? "18px" : "2px" }} />
+              </div>
+              <span className="text-xs font-semibold" style={{ color: form.looking_for_job ? "var(--accent)" : "var(--text-secondary)" }}>يبحث عن عمل</span>
+            </label>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>الهاتف</label><input name="phone" value={form.phone} onChange={handleChange} className="input-field" /></div>
