@@ -87,7 +87,7 @@ export default function Dashboard({ apiBase, onViewTree, onViewArchive, isAdmin,
       {/* Hero */}
       <div className="mb-8 text-center md:text-right">
         <h2 className="text-2xl md:text-3xl font-black mb-2" style={{ color: "var(--text-primary)" }}>
-          سجل أنساب آل أبوعلي البيطار
+          سجل عائلة آل أبوعلي البيطار
         </h2>
         <p className="text-sm" style={{ color: "var(--text-muted)" }}>حفظ التراث العائلي عبر الأجيال</p>
       </div>

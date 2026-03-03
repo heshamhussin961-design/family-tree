@@ -227,7 +227,7 @@ export default function App() {
       </main>
 
       <footer className="py-6 text-center text-xs" style={{ color: "var(--text-muted)" }}>
-        سجل أنساب آل أبوعلي البيطار الرقمي · {new Date().getFullYear()}
+        سجل عائلة آل أبوعلي البيطار الرقمي · {new Date().getFullYear()}
       </footer>
     </div>
   );
