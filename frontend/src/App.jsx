@@ -1,4 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Routes, Route, useNavigate, useLocation, Navigate, Link, NavLink, useParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Home,
+  TreePine,
+  Library,
+  History,
+  Search,
+  UserPlus,
+  ShieldCheck,
+  Mail,
+  LogOut,
+  LogIn,
+  ChevronLeft,
+  Menu,
+  X,
+  Globe
+} from "lucide-react";
+
 import Dashboard from "./components/Dashboard.jsx";
 import SearchBar from "./components/SearchBar.jsx";
 import PersonProfile from "./components/PersonProfile.jsx";
@@ -6,229 +25,500 @@ import AddMemberForm from "./components/AddMemberForm.jsx";
 import MembersList from "./components/MembersList.jsx";
 import TreeView from "./components/TreeView.jsx";
 import LoginPage from "./components/LoginPage.jsx";
+import RegisterPage from "./components/RegisterPage.jsx";
+import InviteManager from "./components/InviteManager.jsx";
 import FamilyArchive from "./components/FamilyArchive.jsx";
+import FamilyHistory from "./components/FamilyHistory.jsx";
+import FamilyAmbassadors from "./components/FamilyAmbassadors.jsx";
+import AdminPanel from "./components/AdminPanel.jsx";
+import ThemeToggle from "./components/ThemeToggle.jsx";
+import { ToastContainer } from "./components/Toast.jsx";
 
 const API_BASE = import.meta.env.VITE_API_BASE ||
   (window.location.hostname === "localhost" ? "http://localhost:8080" : "/api");
 
 const NAV_ITEMS = [
-  {
-    key: "dashboard", label: "الرئيسية",
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
-  },
-  {
-    key: "tree", label: "شجرة العائلة",
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22v-7"/><path d="M7 15H5a2 2 0 0 1-1.5-3.3L12 3l8.5 8.7A2 2 0 0 1 19 15h-2"/><path d="M7 15l5-5 5 5"/></svg>,
-  },
-  {
-    key: "archive", label: "تراث العائلة",
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>,
-  },
-  {
-    key: "search", label: "بحث عن أفراد",
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
-  },
-  {
-    key: "add", label: "إضافة فرد جديد",
-    icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>,
-  },
+  { path: "/", label: "الرئيسية", icon: <Home size={18} /> },
+  { path: "/tree", label: "شجرة العائلة", icon: <TreePine size={18} /> },
+  { path: "/archive", label: "تراث العائلة", icon: <Library size={18} /> },
+  { path: "/history", label: "تاريخ العائلة", icon: <History size={18} /> },
+  { path: "/ambassadors", label: "سفراء العائلة", icon: <Globe size={18} /> },
+  { path: "/search", label: "بحث عن أفراد", icon: <Search size={18} /> },
+  { path: "/add", label: "إضافة فرد جديد", icon: <UserPlus size={18} /> },
 ];
 
-function Navbar({ page, setPage, isAdmin, onLogout, onAdminLogin, setParentPerson }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+const PageWrapper = ({ children }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    transition={{ duration: 0.3, ease: "easeOut" }}
+  >
+    {children}
+  </motion.div>
+);
 
-  const navigate = (key) => {
-    if (key === "add") setParentPerson(null);
-    setPage(key);
-    setSidebarOpen(false);
-  };
+function Navbar({ isAdmin, userInfo, onLogout, onAdminLogin, theme, toggleTheme }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isLoggedIn = !!userInfo;
+  const displayRole = userInfo?.role === "admin" ? "أدمن" : userInfo?.display_name || "";
 
   return (
     <>
-      {/* Desktop Nav */}
-      <nav className="top-nav hidden md:block">
-        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: "var(--primary)" }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M12 22v-7"/><path d="M7 15H5a2 2 0 0 1-1.5-3.3L12 3l8.5 8.7A2 2 0 0 1 19 15h-2"/><path d="M7 15l5-5 5 5"/></svg>
+      <nav className="top-nav sticky top-0 z-50 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between h-16">
+          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20" style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-dark))" }}>
+              <TreePine size={20} color="#fff" />
             </div>
-            <span className="font-black text-base" style={{ color: "var(--text-primary)" }}>شجرة آل أبوعلي البيطار</span>
-          </div>
+            <span className="font-extrabold text-lg tracking-tight hidden sm:block text-slate-900 dark:text-white" style={{ color: "var(--text-primary)" }}>شجرة آل أبوعلي البيطار</span>
+          </Link>
 
-          <div className="flex items-center gap-1">
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center gap-1">
             {NAV_ITEMS.map(item => (
-              <button key={item.key} onClick={() => navigate(item.key)}
-                className={`nav-link flex items-center gap-2 ${(page === item.key || (page === "profile" && item.key === "search")) ? "active" : ""}`}>
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) => `nav-link transition-all ${isActive ? "active" : ""}`}
+              >
                 {item.label}
-              </button>
+              </NavLink>
             ))}
-          </div>
-
-          <div className="flex items-center gap-2">
-            {isAdmin ? (
+            {isAdmin && (
               <>
-                <span className="px-3 py-1 rounded-lg text-xs font-bold" style={{ background: "var(--accent-dim)", color: "var(--accent)" }}>أدمن</span>
-                <button onClick={onLogout} className="text-xs px-3 py-1.5 rounded-lg transition" style={{ color: "var(--text-muted)", border: "1px solid var(--border)" }}>خروج</button>
+                <NavLink to="/admin" className={({ isActive }) => `nav-link transition-all ${isActive ? "active" : ""}`}>
+                  <ShieldCheck size={18} />
+                  الإدارة
+                </NavLink>
+                <NavLink to="/invites" className={({ isActive }) => `nav-link transition-all ${isActive ? "active" : ""}`}>
+                  <Mail size={18} />
+                  دعوات
+                </NavLink>
               </>
-            ) : (
-              <button onClick={onAdminLogin} className="text-xs px-3 py-1.5 rounded-lg transition hover:opacity-80" style={{ color: "var(--accent)", border: "1px solid rgba(197,160,89,0.25)" }}>أدمن</button>
             )}
           </div>
-        </div>
-      </nav>
 
-      {/* Mobile Nav */}
-      <nav className="top-nav md:hidden">
-        <div className="px-4 flex items-center justify-between h-14">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "var(--primary)" }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M12 22v-7"/><path d="M7 15H5a2 2 0 0 1-1.5-3.3L12 3l8.5 8.7A2 2 0 0 1 19 15h-2"/></svg>
-            </div>
-            <span className="font-black text-sm" style={{ color: "var(--text-primary)" }}>آل أبوعلي البيطار</span>
+          <div className="flex items-center gap-3">
+            <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+
+            {isLoggedIn ? (
+              <div className="flex items-center gap-2">
+                <span className="hidden sm:inline-block px-3 py-1 rounded-full text-xs font-bold shadow-sm" style={{
+                  background: isAdmin ? "var(--accent-dim)" : "var(--primary-dim)",
+                  color: isAdmin ? "var(--accent)" : "var(--primary)"
+                }}>{displayRole}</span>
+                <button onClick={onLogout} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-colors">
+                  <LogOut size={20} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={onAdminLogin}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold border transition-all hover:bg-accent-dim hover:border-accent"
+                style={{ color: "var(--accent)", borderColor: "rgba(197,160,89,0.3)" }}
+              >
+                <LogIn size={18} />
+                <span>دخول</span>
+              </button>
+            )}
+            <button onClick={() => setSidebarOpen(true)} className="md:hidden p-2 text-gray-400 hover:bg-white/5 rounded-xl transition">
+              <Menu size={24} />
+            </button>
           </div>
-
-          <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-lg transition" style={{ color: "var(--text-secondary)" }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-          </button>
         </div>
       </nav>
-
-      {/* Mobile Sidebar Overlay */}
-      <div className={`sidebar-overlay ${sidebarOpen ? "open" : ""}`} onClick={() => setSidebarOpen(false)} />
 
       {/* Mobile Sidebar */}
-      <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
-        <div className="p-5 flex items-center justify-between" style={{ borderBottom: "1px solid var(--border)" }}>
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: "var(--primary)" }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M12 22v-7"/><path d="M7 15H5a2 2 0 0 1-1.5-3.3L12 3l8.5 8.7A2 2 0 0 1 19 15h-2"/></svg>
-            </div>
-            <span className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>القائمة</span>
-          </div>
-          <button onClick={() => setSidebarOpen(false)} className="p-1 rounded-lg" style={{ color: "var(--text-muted)" }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-          </button>
-        </div>
+      <AnimatePresence>
+        {sidebarOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSidebarOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60]"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed top-0 right-0 h-full w-72 bg-card border-l border-white/5 z-[70] flex flex-col"
+              style={{ background: "var(--bg-card)" }}
+            >
+              <div className="p-5 flex items-center justify-between border-b border-white/5">
+                <div className="flex items-center gap-2">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-primary">
+                    <TreePine size={18} color="#fff" />
+                  </div>
+                  <span className="font-bold text-slate-900 dark:text-white" style={{ color: "var(--text-primary)" }}>القائمة</span>
+                </div>
+                <button onClick={() => setSidebarOpen(false)} className="p-2 text-gray-400 hover:bg-white/5 rounded-xl transition">
+                  <X size={20} />
+                </button>
+              </div>
 
-        <div className="py-2">
-          {NAV_ITEMS.map(item => (
-            <button key={item.key} onClick={() => navigate(item.key)}
-              className={`sidebar-link w-full ${(page === item.key || (page === "profile" && item.key === "search")) ? "active" : ""}`}>
-              <div className="icon-box">{item.icon}</div>
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </div>
+              <div className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+                {NAV_ITEMS.map(item => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setSidebarOpen(false)}
+                    className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${isActive ? "bg-primary text-white shadow-lg shadow-primary/20" : "text-gray-500 hover:bg-white/5"}`}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </NavLink>
+                ))}
+                {isAdmin && (
+                  <>
+                    <div className="h-px bg-white/5 my-4 mx-4" />
+                    <NavLink to="/admin" onClick={() => setSidebarOpen(false)} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${isActive ? "bg-primary text-white shadow-lg" : "text-gray-500 hover:bg-white/5"}`}>
+                      <ShieldCheck size={18} />
+                      <span>الإدارة</span>
+                    </NavLink>
+                    <NavLink to="/invites" onClick={() => setSidebarOpen(false)} className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${isActive ? "bg-primary text-white shadow-lg" : "text-gray-500 hover:bg-white/5"}`}>
+                      <Mail size={18} />
+                      <span>دعوات</span>
+                    </NavLink>
+                  </>
+                )}
+              </div>
 
-        <div className="px-5 py-4 mt-auto" style={{ borderTop: "1px solid var(--border)" }}>
-          {isAdmin ? (
-            <div className="flex items-center justify-between">
-              <span className="px-3 py-1 rounded-lg text-xs font-bold" style={{ background: "var(--accent-dim)", color: "var(--accent)" }}>أدمن</span>
-              <button onClick={() => { onLogout(); setSidebarOpen(false); }} className="text-xs px-3 py-1.5 rounded-lg" style={{ color: "var(--text-muted)", border: "1px solid var(--border)" }}>خروج</button>
-            </div>
-          ) : (
-            <button onClick={() => { onAdminLogin(); setSidebarOpen(false); }} className="w-full py-2 rounded-lg text-sm font-semibold transition" style={{ color: "var(--accent)", border: "1px solid rgba(197,160,89,0.25)" }}>تسجيل دخول أدمن</button>
-          )}
-        </div>
-      </div>
+              <div className="p-6 border-t border-white/5">
+                {isLoggedIn ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 px-2">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary">
+                        {userInfo.display_name?.[0] || userInfo.username?.[0]}
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-slate-900 dark:text-white" style={{ color: "var(--text-primary)" }}>{userInfo.display_name}</div>
+                        <div className="text-xs text-gray-500">{isAdmin ? "مسؤول النظام" : "محرر فرعي"}</div>
+                      </div>
+                    </div>
+                    <button onClick={() => { onLogout(); setSidebarOpen(false); }} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold border border-red-500/20 text-red-500 hover:bg-red-500/5 transition">
+                      <LogOut size={18} />
+                      <span>تسجيل خروج</span>
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={() => { onAdminLogin(); setSidebarOpen(false); }} className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold bg-primary text-white shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition">
+                    <LogIn size={18} />
+                    <span>تسجيل دخول</span>
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }
 
 export default function App() {
   const [token, setToken] = useState(() => localStorage.getItem("ft_token") || "");
-  const [page, setPage] = useState("dashboard");
+  const [userInfo, setUserInfo] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("ft_user") || "null"); } catch { return null; }
+  });
+
+  const [theme, setTheme] = useState(() => localStorage.getItem("ft_theme") || "dark");
+  const [toasts, setToasts] = useState([]);
+
   const [selected, setSelected] = useState(null);
   const [treeRoot, setTreeRoot] = useState(null);
-  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [treePath, setTreePath] = useState([]);
+  const [showTreeState, setShowTreeState] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   const [parentPerson, setParentPerson] = useState(null);
   const [showFemales, setShowFemales] = useState(true);
 
-  const isAdmin = !!token;
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleLogin = (t) => { setToken(t); localStorage.setItem("ft_token", t); setShowAdminLogin(false); };
-  const handleLogout = () => { localStorage.removeItem("ft_token"); setToken(""); };
+  const isAdmin = userInfo?.role === "admin";
+  const isLoggedIn = !!token && !!userInfo;
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('ft_theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    // Fetch global settings
+    fetch(`${API_BASE}/settings/show_females_to_visitors`)
+      .then(r => r.json())
+      .then(val => {
+        if (typeof val === "boolean") setShowFemales(val);
+      })
+      .catch(() => { });
+  }, []);
+
+  const toggleTheme = () => setTheme(prev => prev === "dark" ? "light" : "dark");
+
+  const notify = useCallback((message, type = "success") => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => removeToast(id), 5000);
+  }, []);
+
+  const removeToast = useCallback((id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  }, []);
+
+  const handleLogin = (data) => {
+    const t = typeof data === "string" ? data : data.access_token;
+    setToken(t);
+    localStorage.setItem("ft_token", t);
+    if (typeof data === "object") {
+      const info = { role: data.role, display_name: data.display_name, branch_root_id: data.branch_root_id, user_id: data.user_id };
+      setUserInfo(info);
+      localStorage.setItem("ft_user", JSON.stringify(info));
+    } else {
+      const info = { role: "admin", display_name: "أدمن" };
+      setUserInfo(info);
+      localStorage.setItem("ft_user", JSON.stringify(info));
+    }
+    setShowLogin(false);
+    notify("تم تسجيل الدخول بنجاح", "success");
+    navigate("/");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("ft_token");
+    localStorage.removeItem("ft_user");
+    setToken("");
+    setUserInfo(null);
+    notify("تم تسجيل الخروج", "info");
+    navigate("/");
+  };
+
+  const handleToggleShowFemales = async () => {
+    const newVal = !showFemales;
+    setShowFemales(newVal);
+    if (isAdmin) {
+      try {
+        await fetch(`${API_BASE}/settings`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+          body: JSON.stringify({ key: "show_females_to_visitors", value: newVal })
+        });
+        notify(`تم ${newVal ? 'إظهار' : 'إخفاء'} الإناث للزوار`, "success");
+      } catch (e) {
+        notify("فشل في حفظ الإعدادات", "error");
+        console.error("Failed to save setting", e);
+      }
+    }
+  };
 
   const handleSelectPerson = async (person) => {
+    if (!person || !person.id) return;
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const res = await fetch(`${API_BASE}/person/${person.id}`, { headers });
-      if (!res.ok) return;
-      setSelected(await res.json());
-      setPage("profile");
-    } catch {}
+      if (!res.ok) {
+        notify("حدث خطأ في جلب بيانات الشخص", "error");
+        return;
+      }
+      const data = await res.json();
+      setSelected(data);
+      navigate(`/profile/${person.id}`);
+    } catch (e) {
+      notify("خطأ في الاتصال بالسيرفر", "error");
+      console.error("Error selecting person:", e);
+    }
   };
 
-  const handleAddDescendant = (p) => { setParentPerson(p); setPage("add"); };
+  const handleAddDescendant = (p) => {
+    if (p) {
+      setParentPerson(p);
+      navigate("/add");
+    }
+  };
 
-  if (showAdminLogin) {
-    return <LoginPage apiBase={API_BASE} onLogin={handleLogin} onCancel={() => setShowAdminLogin(false)} />;
-  }
+  const RenderLoginPage = () => (
+    <LoginPage
+      apiBase={API_BASE}
+      onLogin={handleLogin}
+      onCancel={() => setShowLogin(false)}
+    />
+  );
+
+  const BackButton = () => (
+    <button onClick={() => navigate(-1)} className="group mb-6 flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors">
+      <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/5 group-hover:bg-primary/10 transition-colors">
+        <ChevronLeft size={16} />
+      </div>
+      <span>رجوع</span>
+    </button>
+  );
+
+  if (showLogin) return <RenderLoginPage />;
 
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg-main)" }}>
-      <Navbar page={page} setPage={setPage} isAdmin={isAdmin}
-        onLogout={handleLogout} onAdminLogin={() => setShowAdminLogin(true)}
-        setParentPerson={setParentPerson} />
+    <div className="min-h-screen transition-colors duration-300 Selection:bg-primary/20 Selection:text-primary" style={{ background: "var(--bg-main)" }}>
+      <Navbar isAdmin={isAdmin} userInfo={userInfo}
+        onLogout={handleLogout} onAdminLogin={() => setShowLogin(true)}
+        theme={theme} toggleTheme={toggleTheme} />
 
-      <main className="px-4 md:px-6 py-6 md:py-8">
-        <div className={`${page === "tree" ? "max-w-full" : "max-w-4xl"} w-full mx-auto`}>
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
+        <AnimatePresence mode="wait">
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={
+              <PageWrapper>
+                <Dashboard apiBase={API_BASE} isAdmin={isAdmin} onLogout={handleLogout}
+                  onAdminLogin={() => setShowLogin(true)} onViewTree={() => navigate("/tree")}
+                  onViewSearch={() => navigate("/search")} onViewArchive={() => navigate("/archive")}
+                  onAddMember={() => { setParentPerson(null); navigate("/add"); }}
+                  onExportGedcom={() => window.open(`${API_BASE}/export/gedcom`, "_blank")} />
+              </PageWrapper>
+            } />
 
-          {page === "dashboard" && (
-            <Dashboard apiBase={API_BASE} isAdmin={isAdmin} onLogout={handleLogout}
-              onAdminLogin={() => setShowAdminLogin(true)} onViewTree={() => setPage("tree")}
-              onViewSearch={() => setPage("search")} onViewArchive={() => setPage("archive")}
-              onAddMember={() => { setParentPerson(null); setPage("add"); }} />
-          )}
-
-          {page === "tree" && (
-            <div className="card p-4 md:p-6 animate-fade-in-up">
-              <TreeView apiBase={API_BASE} token={token} isAdmin={isAdmin} rootPerson={treeRoot}
-                onAddMember={handleAddDescendant} onViewProfile={handleSelectPerson}
-                showFemales={showFemales} onToggleShowFemales={() => setShowFemales(v => !v)} />
-              {treeRoot && <button onClick={() => setTreeRoot(null)} className="mt-3 text-xs transition" style={{ color: "var(--text-muted)" }}>← عرض الشجرة الكاملة</button>}
-            </div>
-          )}
-
-          {page === "archive" && <div className="animate-fade-in-up"><FamilyArchive isAdmin={isAdmin} /></div>}
-
-          {page === "search" && (
-            <div className="animate-fade-in-up space-y-4">
-              <SearchBar apiBase={API_BASE} token={token} onSelectPerson={handleSelectPerson} showFemales={showFemales} />
-              <MembersList apiBase={API_BASE} token={token} onSelectPerson={handleSelectPerson} showFemales={showFemales} />
-            </div>
-          )}
-
-          {page === "profile" && selected && (
-            <div className="animate-fade-in-up space-y-4">
-              <button onClick={() => setPage("search")} className="text-sm font-semibold transition" style={{ color: "var(--text-muted)" }}>← رجوع</button>
-              <PersonProfile data={selected} onSelectPerson={handleSelectPerson} onAddDescendant={handleAddDescendant} apiBase={API_BASE} isAdmin={isAdmin} />
-              <button onClick={() => { setTreeRoot(selected.person); setPage("tree"); }}
-                className="btn-primary text-sm flex items-center gap-2">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22v-7"/><path d="M7 15H5a2 2 0 0 1-1.5-3.3L12 3l8.5 8.7A2 2 0 0 1 19 15h-2"/></svg>
-                عرض في الشجرة
-              </button>
-            </div>
-          )}
-
-          {page === "add" && (
-            <div className="animate-fade-in-up">
-              <div className="card p-4 mb-4 flex items-center gap-3" style={{ border: "1px solid rgba(16,185,129,0.15)" }}>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "var(--primary-dim)", color: "var(--primary)" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <Route path="/tree" element={
+              <PageWrapper>
+                <div className="card p-4 md:p-8 overflow-hidden shadow-xl shadow-black/5">
+                  <TreeView apiBase={API_BASE} token={token} isAdmin={isAdmin} rootPerson={treeRoot}
+                    onAddMember={handleAddDescendant} onViewProfile={handleSelectPerson}
+                    showFemales={showFemales} onToggleShowFemales={handleToggleShowFemales}
+                    onBack={treeRoot ? () => setTreeRoot(null) : undefined}
+                    onBackToDashboard={!treeRoot ? () => navigate("/") : undefined}
+                    path={treePath} setPath={setTreePath}
+                    showTree={showTreeState} setShowTree={setShowTreeState} />
                 </div>
-                <span className="text-sm" style={{ color: "var(--text-secondary)" }}>أي فرد من آل أبوعلي البيطار يقدر يضيف نفسه هنا</span>
-              </div>
-              <AddMemberForm apiBase={API_BASE} parentPerson={parentPerson} onSuccess={(m) => { setParentPerson(null); handleSelectPerson(m); }} />
-            </div>
-          )}
+              </PageWrapper>
+            } />
 
-        </div>
+            <Route path="/archive" element={
+              <PageWrapper>
+                <BackButton />
+                <FamilyArchive apiBase={API_BASE} token={token} isAdmin={isAdmin} notify={notify} />
+              </PageWrapper>
+            } />
+
+            <Route path="/history" element={
+              <PageWrapper>
+                <BackButton />
+                <FamilyHistory apiBase={API_BASE} />
+              </PageWrapper>
+            } />
+
+            <Route path="/ambassadors" element={
+              <PageWrapper>
+                <BackButton />
+                <FamilyAmbassadors apiBase={API_BASE} token={token} isAdmin={isAdmin} notify={notify} />
+              </PageWrapper>
+            } />
+
+            <Route path="/search" element={
+              <PageWrapper>
+                <BackButton />
+                <div className="space-y-6">
+                  <SearchBar apiBase={API_BASE} token={token} onSelectPerson={handleSelectPerson} showFemales={showFemales} />
+                  <MembersList apiBase={API_BASE} token={token} onSelectPerson={handleSelectPerson} showFemales={showFemales} />
+                </div>
+              </PageWrapper>
+            } />
+
+            <Route path="/profile/:id" element={
+              <PageWrapper>
+                <BackButton />
+                {selected ? (
+                  <div className="space-y-8">
+                    <PersonProfile data={selected} onSelectPerson={handleSelectPerson} onAddDescendant={handleAddDescendant}
+                      apiBase={API_BASE} isAdmin={isAdmin} token={token} userInfo={userInfo} notify={notify} />
+                    <button onClick={() => { setTreeRoot(selected.person); navigate("/tree"); }}
+                      className="w-full sm:w-auto px-6 py-4 bg-primary text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition">
+                      <TreePine size={20} />
+                      عرض في الشجرة
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+                    <TreePine size={48} className="mb-4 opacity-20" />
+                    <p>برجاء اختيار شخص من البحث أو الشجرة</p>
+                    <button onClick={() => navigate("/search")} className="mt-4 text-primary font-bold">الذهاب للبحث</button>
+                  </div>
+                )}
+              </PageWrapper>
+            } />
+
+            <Route path="/add" element={
+              <PageWrapper>
+                <BackButton />
+                <div className="max-w-2xl mx-auto">
+                  <div className="bg-primary/5 p-4 rounded-2xl mb-8 flex items-center gap-4 border border-primary/10">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-card text-primary shadow-sm">
+                      <UserPlus size={20} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-900 dark:text-white" style={{ color: "var(--text-primary)" }}>إضافة فرد جديد</h3>
+                      <p className="text-xs text-gray-500">سجل بيانات الفرد لتظهر في شجرة العائلة</p>
+                    </div>
+                  </div>
+                  <AddMemberForm apiBase={API_BASE} parentPerson={parentPerson}
+                    onSuccess={(m) => { notify("تم إضافة الفرد بنجاح", "success"); setParentPerson(null); handleSelectPerson(m); }} notify={notify} />
+                </div>
+              </PageWrapper>
+            } />
+
+            <Route path="/admin" element={
+              isAdmin ? (
+                <PageWrapper>
+                  <BackButton />
+                  <AdminPanel apiBase={API_BASE} token={token} isAdmin={isAdmin} notify={notify} />
+                </PageWrapper>
+              ) : <Navigate to="/" />
+            } />
+
+            <Route path="/invites" element={
+              isAdmin ? (
+                <PageWrapper>
+                  <BackButton />
+                  <InviteManager apiBase={API_BASE} token={token} />
+                </PageWrapper>
+              ) : <Navigate to="/" />
+            } />
+
+            <Route path="/invite/:code" element={
+              <PageWrapper>
+                <InviteHandler handleLogin={handleLogin} />
+              </PageWrapper>
+            } />
+
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </AnimatePresence>
       </main>
 
-      <footer className="py-6 text-center text-xs" style={{ color: "var(--text-muted)" }}>
-        سجل عائلة آل أبوعلي البيطار الرقمي · {new Date().getFullYear()}
+      <footer className="py-12 text-center transition-colors">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-8" />
+          <p className="text-sm font-medium text-gray-400">سجل عائلة آل أبوعلي البيطار الرقمي</p>
+          <p className="mt-2 text-xs text-gray-400">© {new Date().getFullYear()} جميع الحقوق محفوظة</p>
+        </div>
       </footer>
+
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
+  );
+}
+
+function InviteHandler({ handleLogin }) {
+  const { code } = useParams();
+  const navigate = useNavigate();
+
+  return (
+    <RegisterPage
+      apiBase={API_BASE}
+      inviteCode={code}
+      onRegister={(data) => { handleLogin(data); }}
+      onCancel={() => navigate("/")}
+    />
   );
 }

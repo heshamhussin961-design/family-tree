@@ -20,6 +20,17 @@ module.exports = {
         "fade-in-up": "fade-in-up 0.4s ease-out both",
         shimmer: "shimmer 1.4s linear infinite",
       },
+      colors: {
+        primary: "#10b981",          /* green */
+        "primary-dark": "#059669",
+        "primary-light": "#34d399",
+        accent: "#c5a059",           /* gold */
+        "accent-dark": "#b48c48",
+        "text-primary": "var(--text-primary)",   /* dynamic text */
+        "text-secondary": "var(--text-secondary)",
+        "text-muted": "var(--text-muted)",
+        card: "var(--bg-card)",      /* dynamic bg */
+      },
     },
   },
   plugins: [],
