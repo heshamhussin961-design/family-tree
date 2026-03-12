@@ -248,7 +248,7 @@ export default function FamilyAmbassadors({ apiBase, token, isAdmin, notify }) {
                 <Globe size={24} />
               </div>
               <div className="text-3xl font-black text-white">{stats.total_countries}</div>
-              <div className="text-xs font-bold text-gray-500 uppercase tracking-widest leading-none">دولة حول العالم</div>
+              <div className="text-xs font-bold text-gray-500 uppercase tracking-widest leading-none">دول حول العالم</div>
             </div>
           </div>
         )}
@@ -348,9 +348,9 @@ export default function FamilyAmbassadors({ apiBase, token, isAdmin, notify }) {
         <div className="space-y-12 lg:sticky lg:top-24 h-fit">
           <div className="p-8 rounded-[2rem] bg-gradient-to-br from-primary/10 to-transparent border border-primary/10 text-center space-y-6">
             <Shield size={48} className="mx-auto text-primary opacity-20" />
-            <h4 className="text-xl font-black text-white">وثيقة السفارة</h4>
+            <h4 className="text-xl font-black text-white">وثيقة السفير</h4>
             <p className="text-xs text-gray-400 leading-relaxed font-medium">
-              يُمنح السفير وثيقة رسمية معتمدة من ديوان آل أبوعلي البيطار، تقديراً لجهوده وتمثيله المشرّف للعائلة في الخارج.
+              يُمنح السفير وثيقة رسمية معتمدة من ديوان آل أبوعلي البيطار، لكي يكون معرفاً لأبناء العائلة أنه يمثل ديوان العائلة، وأنه أحد أعضاء الديوان، مما يساعده في أداء واجباته بكفاءة.
             </p>
             <div className="py-2 px-4 rounded-full bg-black/40 border border-white/5 inline-flex items-center gap-2 text-[10px] font-bold text-gray-500 shadow-xl">
                <Star size={10} className="text-accent" />
@@ -378,7 +378,7 @@ export default function FamilyAmbassadors({ apiBase, token, isAdmin, notify }) {
                    <input type="text" required value={country} onChange={e => setCountry(e.target.value)} className="input-field text-xs py-2.5" placeholder="..." />
                 </div>
                 <div className="space-y-2">
-                   <label className="text-[10px] font-black uppercase text-gray-500 px-1">عدد سنوات السفارة</label>
+                   <label className="text-[10px] font-black uppercase text-gray-500 px-1">عدد السنوات</label>
                    <input type="number" value={years} onChange={e => setYears(e.target.value)} className="input-field text-xs py-2.5" placeholder="..." />
                 </div>
                 <div className="space-y-2">
@@ -408,7 +408,7 @@ export default function FamilyAmbassadors({ apiBase, token, isAdmin, notify }) {
                 <Users size={24} />
              </div>
              <p className="text-[10px] font-bold text-gray-600 leading-relaxed italic">
-               نهدف دائماً لتوسيط شبكة تواصل عائلية فعالة عبر كل بقاع الأرض، لخدمة آل البيطار ورفعة اسمهم.
+               هدفنا ربط أبناء العائلة من خلال شبكة تواصل فعالة في جميع دول العالم تخدم أبناء العائلة.
              </p>
           </div>
         </div>
