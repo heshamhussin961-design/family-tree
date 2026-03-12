@@ -28,6 +28,7 @@ jobs:
             # Build Frontend
             echo "Building frontend..."
             cd frontend
+            rm -rf dist  # Clean old build
             npm install
             npm run build
             echo "Frontend build complete."

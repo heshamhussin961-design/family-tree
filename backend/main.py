@@ -74,7 +74,8 @@ app.include_router(competitions.router)
 
 # ── Serve Frontend (Production Mode) ──────────────────────────────────────────
 # This allows the FastAPI server to serve the React built files directly.
-frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")
+frontend_path = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+frontend_path = str(frontend_path)
 
 if os.path.exists(frontend_path):
     # Mount assets folder for static files
