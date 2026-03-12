@@ -68,9 +68,8 @@ jobs:
             cp -r /tmp/deploy_extract/backend/* /root/family-tree/backend/
             
             echo "--- Fixing .env and Dependencies ---"
+            # Ensure we are in the backend directory
             cd /root/family-tree/backend
-            # Remove redundant postgres line if we want to stick to sqlite
-            sed -i '/postgresql/d' .env
             
             if [ -f requirements.txt ]; then
                 /usr/bin/python3 -m pip install --upgrade -r requirements.txt
