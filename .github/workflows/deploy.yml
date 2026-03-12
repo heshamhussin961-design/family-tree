@@ -22,20 +22,20 @@ jobs:
       - name: Build Frontend
         run: |
           cd frontend
-          npm install
+          npm install --legacy-peer-deps
           npm run build
+          tar -czf dist.tar.gz dist/
 
-      - name: Deploy Frontend to Server (SCP)
+      - name: Transfer Files to Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: 148.135.138.47
           username: root
           password: ${{ secrets.SERVER_PASSWORD }}
-          source: "frontend/dist/*"
-          target: "/var/www/family-tree/frontend/dist"
-          strip_components: 2
+          source: "frontend/dist.tar.gz"
+          target: "/tmp"
 
-      - name: Deploy Backend & Restart Service (SSH)
+      - name: Deploy and Restart (SSH)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: 148.135.138.47
@@ -43,7 +43,15 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             set -e
-            echo "--- Updating Backend ---"
+            echo "--- Updating Frontend Assets ---"
+            mkdir -p /var/www/family-tree/frontend
+            rm -rf /var/www/family-tree/frontend/dist.old
+            [ -d /var/www/family-tree/frontend/dist ] && mv /var/www/family-tree/frontend/dist /var/www/family-tree/frontend/dist.old
+            
+            tar -xzf /tmp/frontend/dist.tar.gz -C /var/www/family-tree/frontend/
+            rm /tmp/frontend/dist.tar.gz
+            
+            echo "--- Updating Backend Code ---"
             cd /root/family-tree
             git pull origin main
             
