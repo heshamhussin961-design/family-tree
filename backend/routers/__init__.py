@@ -1,1 +1,1 @@
-from . import auth, members, admin, archive
+from . import auth, members, admin, archive, ambassadors, competitions
