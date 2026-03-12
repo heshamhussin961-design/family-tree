@@ -19,14 +19,21 @@ jobs:
           username: root
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
+            set -e
+            echo "--- Starting Deployment ---"
             cd /root/family-tree
+            echo "Pulling latest code..."
             git pull origin main
             
             # Build Frontend
+            echo "Building frontend..."
             cd frontend
             npm install
             npm run build
+            echo "Frontend build complete."
             cd ..
 
             # Restart Service
+            echo "Restarting service..."
             systemctl restart family-tree
+            echo "--- Deployment Successful ---"
