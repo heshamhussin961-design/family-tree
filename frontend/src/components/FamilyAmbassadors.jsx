@@ -260,7 +260,7 @@ export default function FamilyAmbassadors({ apiBase, token, isAdmin, notify }) {
           <div className="space-y-8">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <h2 className="text-2xl font-black text-white italic">سفراء فوق العادة</h2>
+                <h2 className="text-2xl font-black text-white italic">سفراء العائلة في الخارج</h2>
                 <div className="h-1 w-20 bg-accent rounded-full" />
               </div>
             </div>
@@ -321,7 +321,7 @@ export default function FamilyAmbassadors({ apiBase, token, isAdmin, notify }) {
           {/* Roles & Responsibilities */}
           <div className="space-y-8">
             <div className="text-right space-y-2 pr-4 border-r-4 border-accent">
-              <h2 className="text-2xl font-black text-white italic">المهام والمسؤوليات المنوطة</h2>
+              <h2 className="text-2xl font-black text-white italic">المهام والمسؤوليات</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

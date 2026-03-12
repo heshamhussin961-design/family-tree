@@ -73,7 +73,7 @@ const ACTION_ITEMS = [
     path: "/competitions",
     icon: <Trophy size={20} />,
     title: "مسابقات وجوائز",
-    desc: "مسابقات علمية دينية رياضية",
+    desc: "مسابقات علمية, دينية, رياضية",
   },
 ];
 
