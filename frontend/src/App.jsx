@@ -15,7 +15,8 @@ import {
   ChevronLeft,
   Menu,
   X,
-  Globe
+  Globe,
+  Trophy
 } from "lucide-react";
 
 import Dashboard from "./components/Dashboard.jsx";
@@ -30,6 +31,7 @@ import InviteManager from "./components/InviteManager.jsx";
 import FamilyArchive from "./components/FamilyArchive.jsx";
 import FamilyHistory from "./components/FamilyHistory.jsx";
 import FamilyAmbassadors from "./components/FamilyAmbassadors.jsx";
+import FamilyCompetitions from "./components/FamilyCompetitions.jsx";
 import AdminPanel from "./components/AdminPanel.jsx";
 import ThemeToggle from "./components/ThemeToggle.jsx";
 import { ToastContainer } from "./components/Toast.jsx";
@@ -43,6 +45,7 @@ const NAV_ITEMS = [
   { path: "/archive", label: "تراث العائلة", icon: <Library size={18} /> },
   { path: "/history", label: "تاريخ العائلة", icon: <History size={18} /> },
   { path: "/ambassadors", label: "سفراء العائلة", icon: <Globe size={18} /> },
+  { path: "/competitions", label: "مسابقات وجوائز", icon: <Trophy size={18} /> },
   { path: "/search", label: "بحث عن أفراد", icon: <Search size={18} /> },
   { path: "/add", label: "إضافة فرد جديد", icon: <UserPlus size={18} /> },
 ];
@@ -412,6 +415,13 @@ export default function App() {
               <PageWrapper>
                 <BackButton />
                 <FamilyAmbassadors apiBase={API_BASE} token={token} isAdmin={isAdmin} notify={notify} />
+              </PageWrapper>
+            } />
+
+            <Route path="/competitions" element={
+              <PageWrapper>
+                <BackButton />
+                <FamilyCompetitions apiBase={API_BASE} token={token} isAdmin={isAdmin} notify={notify} />
               </PageWrapper>
             } />
 

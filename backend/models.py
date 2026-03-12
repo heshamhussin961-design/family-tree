@@ -134,3 +134,28 @@ class Ambassador(Base):
     is_visible  = Column(Boolean, default=True)
     order       = Column(Integer, default=0)
     created_at  = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class Competition(Base):
+    __tablename__ = "competitions"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    title       = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    is_active   = Column(Boolean, default=True)
+    order       = Column(Integer, default=0)
+    created_at  = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class CompetitionResult(Base):
+    __tablename__ = "competition_results"
+
+    id             = Column(Integer, primary_key=True, index=True)
+    competition_id = Column(Integer, ForeignKey("competitions.id", ondelete="CASCADE"), nullable=False)
+    member_name    = Column(String, nullable=False) # Name of candidate/winner
+    member_id      = Column(Integer, ForeignKey("family_members.id", ondelete="SET NULL"), nullable=True) # Optional link to registry
+    status         = Column(String, default="candidate") # 'candidate' | 'winner'
+    reward         = Column(String, nullable=True) # e.g. 'شهادة تقدير', 'جائزة مالية'
+    year           = Column(Integer, nullable=True)
+    notes          = Column(String, nullable=True)
+    created_at     = Column(DateTime, default=lambda: datetime.now(timezone.utc))

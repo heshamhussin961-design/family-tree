@@ -13,7 +13,7 @@ from fastapi.exceptions import RequestValidationError
 load_dotenv()
 
 from db import Base, engine
-from routers import auth, members, admin, archive, ambassadors
+from routers import auth, members, admin, archive, ambassadors, competitions
 
 # Initialize DB Tables 
 # Note: In production, using Alembic is recommended over Base.metadata.create_all
@@ -70,6 +70,7 @@ app.include_router(members.router)
 app.include_router(admin.router)
 app.include_router(archive.router)
 app.include_router(ambassadors.router)
+app.include_router(competitions.router)
 
 # ── Serve Frontend (Production Mode) ──────────────────────────────────────────
 # This allows the FastAPI server to serve the React built files directly.

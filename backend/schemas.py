@@ -302,3 +302,53 @@ class AmbassadorResponse(AmbassadorBase):
     created_at:  datetime
 
     model_config = {"from_attributes": True}
+
+
+# ── Competitions ──────────────────────────────────────────────────────────────
+
+class CompetitionBase(BaseModel):
+    title:       str
+    description: Optional[str] = None
+    is_active:   bool = True
+    order:       int = 0
+
+class CompetitionCreate(CompetitionBase):
+    pass
+
+class CompetitionUpdate(BaseModel):
+    title:       Optional[str] = None
+    description: Optional[str] = None
+    is_active:   Optional[bool] = None
+    order:       Optional[int] = None
+
+class CompetitionResponse(CompetitionBase):
+    id:          int
+    created_at:  datetime
+    model_config = {"from_attributes": True}
+
+
+class CompetitionResultBase(BaseModel):
+    competition_id: int
+    member_name:    str
+    member_id:      Optional[int] = None
+    status:         str = "candidate"
+    reward:         Optional[str] = None
+    year:           Optional[int] = None
+    notes:          Optional[str] = None
+
+class CompetitionResultCreate(CompetitionResultBase):
+    pass
+
+class CompetitionResultUpdate(BaseModel):
+    competition_id: Optional[int] = None
+    member_name:    Optional[str] = None
+    member_id:      Optional[int] = None
+    status:         Optional[str] = None
+    reward:         Optional[str] = None
+    year:           Optional[int] = None
+    notes:          Optional[str] = None
+
+class CompetitionResultResponse(CompetitionResultBase):
+    id:          int
+    created_at:  datetime
+    model_config = {"from_attributes": True}
