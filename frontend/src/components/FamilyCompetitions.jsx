@@ -165,7 +165,7 @@ export default function FamilyCompetitions({ apiBase, token, isAdmin, notify }) 
         </div>
         <h1 className="relative text-4xl md:text-5xl font-black text-white mb-6 tracking-tight leading-tight">
           {settings.comp_intro_title}
-          <span className="block text-primary mt-2 text-2xl md:text-3xl font-bold">مسابقات دينية علمية رياضية</span>
+          <span className="block text-primary mt-2 text-2xl md:text-3xl font-bold">مسابقات علمية دينية رياضية</span>
         </h1>
         {isAdmin && (
             <button onClick={() => setEditSettings(!editSettings)} className="absolute top-8 right-8 p-3 bg-white/5 rounded-2xl text-primary hover:bg-white/10 transition-all">
