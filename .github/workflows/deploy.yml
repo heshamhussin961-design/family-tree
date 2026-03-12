@@ -67,16 +67,18 @@ jobs:
             mkdir -p /root/family-tree/backend
             cp -r /tmp/deploy_extract/backend/* /root/family-tree/backend/
             
-            echo "--- Cleanup ---"
-            rm -rf /tmp/deploy_extract
-            rm /tmp/deploy.tar.gz
-            
-            echo "--- Updating Dependencies ---"
+            echo "--- Fixing .env and Dependencies ---"
             cd /root/family-tree/backend
+            # Remove redundant postgres line if we want to stick to sqlite
+            sed -i '/postgresql/d' .env
+            
             if [ -f requirements.txt ]; then
                 /usr/bin/python3 -m pip install --upgrade -r requirements.txt
             fi
             
             echo "--- Restarting Service ---"
+            systemctl reload nginx
             systemctl restart family-tree
+            # Force table creation
+            python3 -c "from db import engine, Base; import models; Base.metadata.create_all(bind=engine); print('DB Verified')"
             echo "--- Deployment Successful ---"
