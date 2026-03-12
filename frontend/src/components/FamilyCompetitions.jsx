@@ -50,9 +50,9 @@ export default function FamilyCompetitions({ apiBase, token, isAdmin, notify }) 
     try {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
       const [compRes, resultRes, settingsRes] = await Promise.all([
-        fetch(`${apiBase}/competitions`, { headers }),
-        fetch(`${apiBase}/competitions/results`),
-        fetch(`${apiBase}/competitions/settings`)
+        fetch(`${apiBase}/competitions?t=${Date.now()}`, { headers }),
+        fetch(`${apiBase}/competitions/results?t=${Date.now()}`),
+        fetch(`${apiBase}/competitions/settings?t=${Date.now()}`)
       ]);
 
       if (compRes.ok) setCompetitions(await compRes.json());
