@@ -24,15 +24,20 @@ jobs:
           cd frontend
           npm install --legacy-peer-deps
           npm run build
-          tar -czf dist.tar.gz dist/
+          cd ..
 
-      - name: Transfer Files to Server
+      - name: Prepare Deployment Package
+        run: |
+          # Package backend and frontend dist into a single archive
+          tar -czf deploy.tar.gz backend/ frontend/dist/
+
+      - name: Transfer Package to Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: 148.135.138.47
           username: root
           password: ${{ secrets.SERVER_PASSWORD }}
-          source: "frontend/dist.tar.gz"
+          source: "deploy.tar.gz"
           target: "/tmp"
 
       - name: Deploy and Restart (SSH)
@@ -43,17 +48,34 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             set -e
+            echo "--- Extracting Deployment Package ---"
+            # Extract to a temp dir
+            rm -rf /tmp/deploy_extract
+            mkdir -p /tmp/deploy_extract
+            tar -xzf /tmp/deploy.tar.gz -C /tmp/deploy_extract
+            
             echo "--- Updating Frontend Assets ---"
+            # Ensure target dirs exist
             mkdir -p /var/www/family-tree/frontend
+            # Backup & Swap dist
             rm -rf /var/www/family-tree/frontend/dist.old
             [ -d /var/www/family-tree/frontend/dist ] && mv /var/www/family-tree/frontend/dist /var/www/family-tree/frontend/dist.old
-            
-            tar -xzf /tmp/frontend/dist.tar.gz -C /var/www/family-tree/frontend/
-            rm /tmp/frontend/dist.tar.gz
+            cp -r /tmp/deploy_extract/frontend/dist /var/www/family-tree/frontend/
             
             echo "--- Updating Backend Code ---"
-            cd /root/family-tree
-            git pull origin main
+            # Sync backend files to /root/family-tree
+            mkdir -p /root/family-tree/backend
+            cp -r /tmp/deploy_extract/backend/* /root/family-tree/backend/
+            
+            echo "--- Cleanup ---"
+            rm -rf /tmp/deploy_extract
+            rm /tmp/deploy.tar.gz
+            
+            echo "--- Updating Dependencies ---"
+            cd /root/family-tree/backend
+            if [ -f requirements.txt ]; then
+                /usr/bin/python3 -m pip install --upgrade -r requirements.txt
+            fi
             
             echo "--- Restarting Service ---"
             systemctl restart family-tree
