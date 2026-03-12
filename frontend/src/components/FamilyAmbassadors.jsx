@@ -201,7 +201,7 @@ export default function FamilyAmbassadors({ apiBase, token, isAdmin, notify }) {
           <Globe size={48} color="#fff" strokeWidth={1.5} />
         </div>
         <h1 className="relative text-2xl md:text-3xl font-black text-white tracking-tight leading-tight">
-          سفراء العائلة في العالم
+          سفراء العائلة <br className="md:hidden" /> في العالم
           <span className="block text-accent mt-6 text-base md:text-lg font-bold italic opacity-90">تواصل مع سفراء العائلة في الخارج</span>
         </h1>
         <div className="relative max-w-3xl mx-auto bg-white/[0.02] backdrop-blur-md border border-white/5 p-6 rounded-3xl">
