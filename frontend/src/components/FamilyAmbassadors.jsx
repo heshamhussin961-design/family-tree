@@ -303,7 +303,7 @@ export default function FamilyAmbassadors({ apiBase, token, isAdmin, notify }) {
                        </div>
                        {amb.years && (
                         <div className="space-y-1">
-                          <div className="text-[10px] font-black uppercase text-gray-600 tracking-wider">مدة السفارة</div>
+                          <div className="text-[10px] font-black uppercase text-gray-600 tracking-wider">عدد السنوات</div>
                           <div className="text-sm font-bold text-white">{amb.years} سنوات</div>
                         </div>
                        )}
