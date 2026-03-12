@@ -22,5 +22,11 @@ jobs:
             cd /root/family-tree
             git pull origin main
             
+            # Build Frontend
+            cd frontend
+            npm install
+            npm run build
+            cd ..
+
             # Restart Service
             systemctl restart family-tree
