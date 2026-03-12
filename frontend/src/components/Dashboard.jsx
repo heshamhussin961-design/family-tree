@@ -11,7 +11,8 @@ import {
   UserPlus,
   Download,
   Lock,
-  Globe
+  Globe,
+  Trophy
 } from "lucide-react";
 
 const STAT_CARDS = [
@@ -67,6 +68,12 @@ const ACTION_ITEMS = [
     icon: <Globe size={20} />,
     title: "سفراء العائلة في الخارج",
     desc: "تواصل مع سفراء العائلة في العالم",
+  },
+  {
+    path: "/competitions",
+    icon: <Trophy size={20} />,
+    title: "مسابقات وجوائز",
+    desc: "برامج التفوق والمكافآت",
   },
 ];
 
