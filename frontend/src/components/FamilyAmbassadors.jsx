@@ -197,12 +197,12 @@ export default function FamilyAmbassadors({ apiBase, token, isAdmin, notify }) {
       {/* Hero Section */}
       <div className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#16161a] to-[#0c0c0e] border border-white/5 p-8 md:p-16 text-center">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-accent/10 blur-[120px] rounded-full" />
-        <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-[2.2rem] bg-accent mb-6 shadow-2xl shadow-accent/20">
+        <div className="relative inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-accent mb-4 shadow-2xl shadow-accent/20">
           <Globe size={48} color="#fff" strokeWidth={1.5} />
         </div>
-        <h1 className="relative text-3xl md:text-4xl font-black text-white mb-6 tracking-tight leading-tight">
+        <h1 className="relative text-2xl md:text-3xl font-black text-white tracking-tight leading-tight">
           سفراء العائلة في العالم
-          <span className="block text-accent mt-4 text-lg md:text-xl font-bold italic">تواصل مع سفراء العائلة في الخارج</span>
+          <span className="block text-accent mt-6 text-base md:text-lg font-bold italic opacity-90">تواصل مع سفراء العائلة في الخارج</span>
         </h1>
         <div className="relative max-w-3xl mx-auto bg-white/[0.02] backdrop-blur-md border border-white/5 p-6 rounded-3xl">
           <p className="text-gray-400 leading-relaxed font-medium text-sm md:text-base">
