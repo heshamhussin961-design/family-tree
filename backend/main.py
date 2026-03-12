@@ -72,12 +72,12 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     return JSONResponse(status_code=422, content={"detail": msg})
 
 # Register Routers
-app.include_router(auth.router, prefix="/api")
-app.include_router(members.router, prefix="/api")
-app.include_router(admin.router, prefix="/api")
-app.include_router(archive.router, prefix="/api")
-app.include_router(ambassadors.router, prefix="/api")
-app.include_router(competitions.router, prefix="/api")
+app.include_router(auth.router)
+app.include_router(members.router)
+app.include_router(admin.router)
+app.include_router(archive.router)
+app.include_router(ambassadors.router)
+app.include_router(competitions.router)
 
 # ── Serve Frontend (Production Mode) ──────────────────────────────────────────
 # This allows the FastAPI server to serve the React built files directly.
