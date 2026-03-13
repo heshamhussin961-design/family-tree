@@ -407,7 +407,7 @@ export default function App() {
             <Route path="/history" element={
               <PageWrapper>
                 <BackButton />
-                <FamilyHistory apiBase={API_BASE} />
+                <FamilyHistory apiBase={API_BASE} isAdmin={isAdmin} />
               </PageWrapper>
             } />
 
