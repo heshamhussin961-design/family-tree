@@ -43,8 +43,15 @@ def upload_archive_item(
 ):
     """Add a new item to the family archive. Admin only."""
     ext = Path(file.filename).suffix or ""
-    # Simplified logic: images get preview, others are documents
-    file_type = "document" if ext.lower() in [".pdf", ".doc", ".docx"] else "image"
+    # Support for multiple file types
+    if ext.lower() in [".pdf", ".doc", ".docx"]:
+        file_type = "document"
+    elif ext.lower() in [".mp4", ".mov", ".avi"]:
+        file_type = "video"
+    elif ext.lower() in [".mp3", ".wav", ".m4a"]:
+        file_type = "audio"
+    else:
+        file_type = "image"
     filename = f"arch_{uuid.uuid4().hex[:8]}{ext}"
     dest = ARCHIVE_DIR / filename
     
@@ -98,7 +105,14 @@ def update_archive_item(
         
         # Save new file
         ext = Path(file.filename).suffix or ""
-        file_type = "document" if ext.lower() in [".pdf", ".doc", ".docx"] else "image"
+        if ext.lower() in [".pdf", ".doc", ".docx"]:
+            file_type = "document"
+        elif ext.lower() in [".mp4", ".mov", ".avi"]:
+            file_type = "video"
+        elif ext.lower() in [".mp3", ".wav", ".m4a"]:
+            file_type = "audio"
+        else:
+            file_type = "image"
         new_filename = f"arch_{uuid.uuid4().hex[:8]}{ext}"
         dest = ARCHIVE_DIR / new_filename
         dest.write_bytes(file.file.read())

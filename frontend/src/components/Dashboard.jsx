@@ -12,7 +12,8 @@ import {
   Download,
   Lock,
   Globe,
-  Trophy
+  Trophy,
+  History
 } from "lucide-react";
 
 const STAT_CARDS = [

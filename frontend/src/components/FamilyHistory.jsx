@@ -101,12 +101,12 @@ export default function FamilyHistory({ apiBase }) {
         <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-[2rem] bg-accent mb-6 shadow-2xl shadow-accent/20">
           <History size={40} color="#fff" strokeWidth={1.5} />
         </div>
-        <h2 className="relative text-3xl font-black text-white mb-2 tracking-tight leading-tight">
-          <span className="block mb-4 text-accent uppercase tracking-widest text-sm font-bold">تراث عائلة</span>
-          آل أبوعلي البيطار
+        <h2 className="relative font-black text-white mb-2 tracking-tight leading-tight">
+          <span className="block mb-4 text-accent uppercase tracking-widest text-2xl font-bold">تراث عائلة</span>
+          <span className="text-3xl">آل أبوعلي البيطار</span>
         </h2>
         <p className="relative text-sm text-gray-400 font-medium max-w-lg mx-auto leading-relaxed">
-          نحن لا نوثق مجرد أسماء، بل نحفظ هوية وأرواح وقصص أجدادنا لنورثها للأجيال القادمة.
+          نحن لا نوثق مجرد أسماء، بل نحفظ هوية وتاريخ وقصص أجدادنا لنورثها للأجيال القادمة
         </p>
       </div>
 
@@ -137,114 +137,122 @@ export default function FamilyHistory({ apiBase }) {
         </div>
       )}
 
-      {/* Definition Section */}
-      <section className="space-y-8">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
-            <Info size={20} />
-          </div>
-          <div>
-            <h3 className="text-xl font-black text-white">{DEFINITION.title}</h3>
-            <p className="text-xs text-accent font-bold mt-1 tracking-wide">{DEFINITION.concept}</p>
-          </div>
-        </div>
-
-        <div className="card p-8 bg-gradient-to-br from-white/[0.02] to-transparent border-white/5 space-y-6">
-          <p className="text-lg font-bold text-white/90 leading-relaxed border-b border-white/5 pb-6">
-            {DEFINITION.intro}
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {DEFINITION.points.map((p, i) => (
-              <div key={i} className="space-y-2 group">
-                <h4 className="text-accent font-black text-sm group-hover:translate-x-[-4px] transition-transform flex items-center gap-2">
-                  <ArrowRight size={14} className="rotate-180" />
-                  {p.title}
-                </h4>
-                <p className="text-sm text-gray-400 leading-relaxed font-medium">
-                  {p.content}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="pt-6 border-t border-white/5">
-             <p className="text-sm font-bold text-primary mb-2 flex items-center gap-2">
-               <CheckCircle2 size={16} />
-               {DEFINITION.footer}
-             </p>
-             <div className="p-4 rounded-2xl bg-accent/5 border border-accent/10">
-               <p className="text-sm text-accent font-black italic">
-                 {DEFINITION.quote}
-               </p>
-             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="space-y-8">
+      {/* Benefits Detailed Section */}
+      <section className="space-y-12">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
             <Lightbulb size={20} />
           </div>
-          <h3 className="text-xl font-black text-white">{BENEFITS.title}</h3>
+          <h3 className="text-2xl font-black text-white">الفائدة من التسجيل والدخول في شجرة العائلة</h3>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {BENEFITS.list.map((benefit, i) => (
-            <div key={i} className="card p-6 bg-white/[0.01] border-white/5 hover:border-accent/30 transition-all flex items-start gap-4 group">
-              <div className="mt-1 w-5 h-5 rounded-full bg-accent/10 text-accent flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <CheckCircle2 size={14} />
+        <div className="grid grid-cols-1 gap-8">
+          {/* Card 1 */}
+          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                <TreePine size={24} />
               </div>
-              <p className="text-[13px] text-gray-300 font-bold leading-relaxed">{benefit}</p>
+              <h4 className="text-xl font-bold text-white">1. إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد</h4>
             </div>
-          ))}
-        </div>
-      </section>
+            <p className="text-gray-400 leading-loose">
+              كل منا يرغب في إظهار هذه العائلة الكريمة بالشكل اللائق بها. فقد اجتهد الأجداد والآباء والأعمام الأولين (رحمهم الله) جميعاً في وضع حجر الأساس في هذا الموضوع، وتوجب علينا جميعاً، أن نكمل المسيرة، ووضع اللبنات في مكانها الصحيح، من أجل الحصول على بناء محترم للعائلة، يتناسب مع تكنولوجيا هذا العصر في زمن الـ AI.
+              <br /><br />
+              ترك لنا الأجداد والأعمام، أعرف منهم العم الفاضل/ خليل نمر أبوعلي (رحمه الله)، إرثاً عظيماً، بقي للعام 2000م دون متابعة إلى تاريخنا هذا.
+            </p>
+          </div>
 
-      {/* Stories / Detailed Sections */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {STORIES.map((story, i) => (
-          <div key={i} className="card p-8 bg-gradient-to-br from-white/[0.02] to-transparent border-white/5 space-y-6 flex flex-col">
-            <div className="flex items-center gap-4 mb-2">
-              <div className="w-14 h-14 rounded-2xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
-                <story.icon size={28} />
+          {/* Card 2 */}
+          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                <Globe size={24} />
               </div>
-              <h3 className="text-lg font-black text-white leading-tight">{story.title}</h3>
+              <h4 className="text-xl font-bold text-white">2. التعرف على أبناء العم في شتى أنحاء العالم</h4>
             </div>
-            <div className="space-y-4 flex-1">
-              {story.content.map((p, j) => (
-                <p key={j} className="text-sm text-gray-400 leading-relaxed font-medium">
-                  {p}
-                </p>
+            <div className="text-gray-400 space-y-4 leading-loose">
+              <p>بسبب انشغال العديد منا في لقمة العيش، والسعي لذلك عبر السفر إلى بلدان ودول شتى في أنحاء المعمورة، أصبحت الزيارات أقل والتلاقي ليس بالأمر السهل والهيّن، على مستوى العائلة الكبيرة، وحتى أحياناً على مستوى العائلة الصغيرة.</p>
+              <p>كما أصبح الكثير منا في هذا زمن لا يجد الوقت الكافي لزيارة أخاه أو أخته أو حتى ابنته وولده، فما بالك في أبناء العم والعمة، والخال والخالة، وهذا كله من صلة الرحم.</p>
+              <p>لذلك، أصبحت متابعة الأهل والأقارب والأسرة الكبيرة على الأقل، عن طريق التكنولوجيا ووسائل التواصل الاجتماعي (الفيسبوك، الواتس أب، الرسائل الإلكترونية) ممكنة، وأسهل بكثير.</p>
+              <p>من منا، يحب أن يسمع على الأقل أخبار أبناء العم الآخرين، أماكن تواجدهم، أحوالهم، ويرغب في أن يكون في هذا التجمع، هو من سيسجل معنا في هذه الشجرة، التي أسأل الله العظيم أن تكون شجرة طيبة مثمرة، أصلها ثابت وفرعها في السماء.</p>
+            </div>
+          </div>
+
+          {/* Card 3 */}
+          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                <Users size={24} />
+              </div>
+              <h4 className="text-xl font-bold text-white">3. الاستفادة من جمع أفراد العائلة تحت مظلية واحدة</h4>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { t: "سهولة التصويت", d: "في أي انتخابات داخلية كانت أو خارجية (بشكل مدروس)." },
+                { t: "بطاقات خصومات", d: "الحصول على بطاقات خصومات أو خدمات صحية بشكل أفضل وأسعار أفضل." },
+                { t: "الحالات الإنسانية", d: "في حال الطوارئ، يسهل الوصول للمتبرعين بالدم حسب الفصيلة المسجلة بالسيستم." }
+              ].map((item, i) => (
+                <div key={i} className="p-5 rounded-2xl bg-white/5 border border-white/5 space-y-2">
+                  <div className="text-primary font-bold text-sm">{item.t}</div>
+                  <p className="text-xs text-gray-500 leading-relaxed">{item.d}</p>
+                </div>
               ))}
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Communcation Section */}
-      <section className="space-y-8">
-        <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-          <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
-            <Phone size={20} />
-          </div>
-          <div>
-            <h3 className="text-xl font-black text-white">{ACCESS_COMMUNICATION.title}</h3>
-            <p className="text-xs text-gray-500 font-bold">{ACCESS_COMMUNICATION.subtitle}</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {ACCESS_COMMUNICATION.points.map((p, i) => (
-            <div key={i} className="card p-8 bg-white/[0.01] border-white/5 group hover:bg-white/[0.03] transition-all">
-              <div className="w-12 h-12 rounded-2xl bg-accent/20 text-accent flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-accent/10">
-                <p.icon size={24} />
+          {/* Card 4 */}
+          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Phone size={20} className="text-accent" />
+                  <h4 className="font-bold text-white">سهولة الوصول والتواصل</h4>
+                </div>
+                <ul className="space-y-3 text-sm text-gray-400">
+                  <li className="flex gap-2"><span>•</span> إرسال رسائل تذكير عبر الواتس أب والبريد الإلكتروني.</li>
+                  <li className="flex gap-2"><span>•</span> دفع مبالغ الاشتراك مباشرة للحساب البنكي للديوان.</li>
+                  <li className="flex gap-2"><span>•</span> توفير الوقت والمال في التنقل والتحصيل اليدوي.</li>
+                </ul>
               </div>
-              <p className="text-sm text-gray-300 font-bold leading-loose">
-                {p.text}
-              </p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <ShieldCheck size={20} className="text-primary" />
+                  <h4 className="font-bold text-white">الفزعات والمساعدات</h4>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  تقديم الخدمات للمشتركين بالشكل اللائق، والتواصل المباشر مع اللجنة المسؤولة عن المساعدات عبر الواتس أب الخاص أو الاجتماعات المرتبة.
+                </p>
+              </div>
             </div>
-          ))}
+          </div>
+
+          {/* Card 5 */}
+          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
+             <div className="flex items-center gap-4">
+               <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                 <Cpu size={24} />
+               </div>
+               <h4 className="text-xl font-bold text-white">تنظيم لقاءات وفعاليات اجتماعية</h4>
+             </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
+                   <CheckCircle2 size={16} className="text-primary" />
+                   <span className="text-sm text-gray-300">اجتماعات دورية لرئيس وأعضاء الديوان</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
+                   <CheckCircle2 size={16} className="text-primary" />
+                   <span className="text-sm text-gray-300">تنظيم اجتماع عائلي سنوي يجمع الكل</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
+                   <CheckCircle2 size={16} className="text-primary" />
+                   <span className="text-sm text-gray-300">مشاركة العائلة في المناسبات الخارجية</span>
+                </div>
+                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
+                   <CheckCircle2 size={16} className="text-primary" />
+                   <span className="text-sm text-gray-300">الاستفادة من مقترحات أبناء العائلة عالمياً</span>
+                </div>
+             </div>
+          </div>
         </div>
       </section>
 

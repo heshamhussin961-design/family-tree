@@ -16,11 +16,17 @@ import {
   CheckCircle2,
   AlertCircle,
   Pencil,
-  X
+  X,
+  Video,
+  Mic,
+  Box
 } from "lucide-react";
 
 const SECTIONS = [
-  { key: "photos", title: "صور شخصيات", icon: ImageIcon },
+  { key: "photos", title: "صور أشخاص", icon: ImageIcon },
+  { key: "videos", title: "فيديوهات قديمة", icon: Video },
+  { key: "voices", title: "فويسات", icon: Mic },
+  { key: "antiques", title: "مقتنيات قديمة", icon: Box },
   { key: "documents", title: "مستندات قديمة", icon: FileText },
   { key: "letters", title: "رسائل قديمة", icon: Mail },
   { key: "stories", title: "قصص وروايات", icon: BookOpen },
@@ -230,8 +236,13 @@ export default function FamilyArchive({ apiBase, token, isAdmin, notify }) {
                 </div>
               ) : (
                 <div className="h-48 w-full flex flex-col items-center justify-center gap-3 bg-white/[0.02] border-b border-white/5 text-primary group-hover:bg-white/[0.04] transition-colors">
-                  <FileText size={48} strokeWidth={1} />
-                  <span className="text-[10px] font-black tracking-widest uppercase opacity-40">Document File</span>
+                  {item.category === "videos" ? <Video size={48} strokeWidth={1} /> : 
+                   item.category === "voices" ? <Mic size={48} strokeWidth={1} /> :
+                   <FileText size={48} strokeWidth={1} />}
+                  <span className="text-[10px] font-black tracking-widest uppercase opacity-40">
+                    {item.category === "videos" ? "Video File" : 
+                     item.category === "voices" ? "Audio File" : "Document File"}
+                  </span>
                 </div>
               )}
               <div className="p-5 flex-1 flex flex-col">
