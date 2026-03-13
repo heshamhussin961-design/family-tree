@@ -137,7 +137,7 @@ export default function FamilyHistory({ apiBase }) {
         </div>
       )}
 
-
+      <section className="space-y-10">
         <div className="grid grid-cols-1 gap-8">
           {/* Section 2: Roots */}
           <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
