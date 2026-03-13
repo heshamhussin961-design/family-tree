@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { INITIAL_HERITAGE } from "../constants/heritage";
 import { Edit2, Trash2, Plus, X, Info, PlusCircle, MinusCircle } from "lucide-react";
 
