@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { INITIAL_HERITAGE } from "../constants/heritage";
 import { Edit2, Trash2, Plus, X, Info, PlusCircle, MinusCircle } from "lucide-react";
 
 export default function HeritageAdmin({ apiBase, token, notify }) {
@@ -27,7 +27,18 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
       const res = await fetch(`${apiBase}/admin/heritage`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
-      if (res.ok) setSections(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        let merged = [...INITIAL_HERITAGE];
+        if (data && data.length > 0) {
+          data.forEach(dbItem => {
+            const idx = merged.findIndex(h => h.section_key === dbItem.section_key);
+            if (idx !== -1) merged[idx] = dbItem;
+            else merged.push(dbItem);
+          });
+        }
+        setSections(merged.sort((a,b) => (a.order || 0) - (b.order || 0)));
+      }
     } catch (e) {
       console.error(e);
       if (notify) notify("فشل تحميل البيانات", "error");
@@ -63,11 +74,12 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
         order: parseInt(formData.order) 
       };
       
-      const url = editingId 
+      const isNew = !editingId || typeof editingId === 'string';
+      const url = !isNew 
         ? `${apiBase}/heritage/${editingId}`
         : `${apiBase}/heritage`;
       
-      const method = editingId ? "PUT" : "POST";
+      const method = !isNew ? "PUT" : "POST";
 
       const res = await fetch(url, {
         method,
@@ -107,6 +119,10 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
   };
 
   const handleDelete = async (id) => {
+    if (typeof id === 'string') {
+      if (notify) notify("لا يمكن حذف الأقسام الأساسية؛ يمكنك إخفاؤها فقط", "error");
+      return;
+    }
     if (!window.confirm("هل أنت متأكد من حذف هذا القسم؟")) return;
     try {
       const res = await fetch(`${apiBase}/heritage/${id}`, {
