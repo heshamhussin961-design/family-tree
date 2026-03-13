@@ -148,15 +148,27 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
         const heritageRes = await fetch(`${apiBase}/heritage`);
         if (heritageRes.ok) {
           const data = await heritageRes.json();
+          let finalHeritage = [...INITIAL_HERITAGE];
+          
           if (data && data.length > 0) {
-            const mappedData = data.map(item => {
-              if (item.section_key === 'header' && (item.title === 'تراث عائلة' || item.title === 'تراث العائلة')) {
-                return { ...item, title: 'تاريخ عائلة' };
+            data.forEach(dbItem => {
+              const idx = finalHeritage.findIndex(h => h.section_key === dbItem.section_key);
+              if (idx !== -1) {
+                finalHeritage[idx] = dbItem;
+              } else {
+                finalHeritage.push(dbItem);
               }
-              return item;
             });
-            setHeritage(mappedData);
           }
+
+          const mappedData = finalHeritage.map(item => {
+            if (item.section_key === 'header' && (item.title === 'تراث عائلة' || item.title === 'تراث العائلة')) {
+              return { ...item, title: 'تاريخ عائلة' };
+            }
+            return item;
+          }).sort((a, b) => (a.order || 0) - (b.order || 0));
+
+          setHeritage(mappedData);
         }
       } catch (e) { 
         console.error("Failed to fetch heritage data:", e); 
