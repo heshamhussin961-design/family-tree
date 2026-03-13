@@ -137,8 +137,8 @@ export default function FamilyHistory({ apiBase }) {
         </div>
       )}
 
-      {/* Benefits Detailed Section */}
-      <section className="space-y-12">
+      {/* Benefits Headline Section */}
+      <section className="space-y-10">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
             <Lightbulb size={20} />
@@ -146,14 +146,36 @@ export default function FamilyHistory({ apiBase }) {
           <h3 className="text-2xl font-black text-white">الفائدة من التسجيل والدخول في شجرة العائلة</h3>
         </div>
 
+        {/* The 9 Points Summary List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+          {[
+            "إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد فيها",
+            "التعرف على أبناء العم في شتى أنحاء العالم",
+            "الاستفادة من جمع أفراد العائلة تحت مظلية واحدة",
+            "سهولة الوصول إلى المشتركين عن طريق الهاتف ووسائل التواصل",
+            "تقديم الخدمات للمشتركين بالشكل المناسب",
+            "الفزعات والمساعدات الطارئة أو الفورية",
+            "الاستفادة من المقترحات الجديدة من أي نقطة في العالم",
+            "تنظيم فعاليات اجتماعية عبر المراسلات الإلكترونية",
+            "مخرجات جديدة"
+          ].map((text, i) => (
+            <div key={i} className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5 group hover:bg-primary/5 transition-all">
+               <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-110 transition-transform">
+                 {i + 1}
+               </div>
+               <span className="text-sm font-bold text-gray-300 group-hover:text-white transition-colors">{text}</span>
+            </div>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 gap-8">
-          {/* Card 1 */}
+          {/* Section 2: Roots */}
           <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
                 <TreePine size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white">1. إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد</h4>
+              <h4 className="text-xl font-bold text-white leading-tight">إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد</h4>
             </div>
             <p className="text-gray-400 leading-loose">
               كل منا يرغب في إظهار هذه العائلة الكريمة بالشكل اللائق بها. فقد اجتهد الأجداد والآباء والأعمام الأولين (رحمهم الله) جميعاً في وضع حجر الأساس في هذا الموضوع، وتوجب علينا جميعاً، أن نكمل المسيرة، ووضع اللبنات في مكانها الصحيح، من أجل الحصول على بناء محترم للعائلة، يتناسب مع تكنولوجيا هذا العصر في زمن الـ AI.
@@ -162,94 +184,105 @@ export default function FamilyHistory({ apiBase }) {
             </p>
           </div>
 
-          {/* Card 2 */}
+          {/* Section 3: Global Connections */}
           <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
                 <Globe size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white">2. التعرف على أبناء العم في شتى أنحاء العالم</h4>
+              <h4 className="text-xl font-bold text-white leading-tight">التعرف على أبناء العم في شتى أنحاء العالم</h4>
             </div>
             <div className="text-gray-400 space-y-4 leading-loose">
               <p>بسبب انشغال العديد منا في لقمة العيش، والسعي لذلك عبر السفر إلى بلدان ودول شتى في أنحاء المعمورة، أصبحت الزيارات أقل والتلاقي ليس بالأمر السهل والهيّن، على مستوى العائلة الكبيرة، وحتى أحياناً على مستوى العائلة الصغيرة.</p>
-              <p>كما أصبح الكثير منا في هذا زمن لا يجد الوقت الكافي لزيارة أخاه أو أخته أو حتى ابنته وولده، فما بالك في أبناء العم والعمة، والخال والخالة، وهذا كله من صلة الرحم.</p>
+              <p>كما أصبح الكثير منا في هذا الزمن لا يجد الوقت الكافي لزيارة أخاه أو أخته أو حتى ابنته وولده، فما بالك في أبناء العم والعمة، والخال والخالة، وهذا كله من صلة الرحم.</p>
               <p>لذلك، أصبحت متابعة الأهل والأقارب والأسرة الكبيرة على الأقل، عن طريق التكنولوجيا ووسائل التواصل الاجتماعي (الفيسبوك، الواتس أب، الرسائل الإلكترونية) ممكنة، وأسهل بكثير.</p>
               <p>من منا، يحب أن يسمع على الأقل أخبار أبناء العم الآخرين، أماكن تواجدهم، أحوالهم، ويرغب في أن يكون في هذا التجمع، هو من سيسجل معنا في هذه الشجرة، التي أسأل الله العظيم أن تكون شجرة طيبة مثمرة، أصلها ثابت وفرعها في السماء.</p>
             </div>
           </div>
 
-          {/* Card 3 */}
+          {/* Section 4: Unified Umbrella */}
           <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
                 <Users size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white">3. الاستفادة من جمع أفراد العائلة تحت مظلية واحدة</h4>
+              <h4 className="text-xl font-bold text-white leading-tight">الاستفادة من جمع أفراد العائلة تحت مظلية واحدة</h4>
             </div>
+            <p className="text-gray-300 font-bold mb-4">هناك العديد من الفوائد التي ممكن أن تتحقق من خلال جمع أفراد العائلة الكبيرة تحت مظلية واحدة، منها:</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 { t: "سهولة التصويت", d: "في أي انتخابات داخلية كانت أو خارجية (بشكل مدروس)." },
                 { t: "بطاقات خصومات", d: "الحصول على بطاقات خصومات أو خدمات صحية بشكل أفضل وأسعار أفضل." },
-                { t: "الحالات الإنسانية", d: "في حال الطوارئ، يسهل الوصول للمتبرعين بالدم حسب الفصيلة المسجلة بالسيستم." }
+                { t: "الحالات الإنسانية", d: "في حال الطوارئ، يسهل الوصول للمتبرعين بالدم حسب الفصيلة المسجلة بالسيستم رسالة واحدة تصل للجميع (بشكل مدروس)." }
               ].map((item, i) => (
-                <div key={i} className="p-5 rounded-2xl bg-white/5 border border-white/5 space-y-2">
-                  <div className="text-primary font-bold text-sm">{item.t}</div>
-                  <p className="text-xs text-gray-500 leading-relaxed">{item.d}</p>
+                <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-3 group hover:border-primary/30 transition-all">
+                  <div className="text-primary font-black text-sm uppercase tracking-wider">{item.t}</div>
+                  <p className="text-xs text-gray-400 leading-relaxed font-medium">{item.d}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Card 4 */}
+          {/* Section 5: Communication */}
           <div className="card p-8 bg-white/[0.01] border-white/5 space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+              <div className="space-y-6">
                 <div className="flex items-center gap-3">
-                  <Phone size={20} className="text-accent" />
-                  <h4 className="font-bold text-white">سهولة الوصول والتواصل</h4>
+                  <Phone size={24} className="text-accent" />
+                  <h4 className="text-lg font-black text-white leading-tight">سهولة الوصول والتواصل</h4>
                 </div>
-                <ul className="space-y-3 text-sm text-gray-400">
-                  <li className="flex gap-2"><span>•</span> إرسال رسائل تذكير عبر الواتس أب والبريد الإلكتروني.</li>
-                  <li className="flex gap-2"><span>•</span> دفع مبالغ الاشتراك مباشرة للحساب البنكي للديوان.</li>
-                  <li className="flex gap-2"><span>•</span> توفير الوقت والمال في التنقل والتحصيل اليدوي.</li>
+                <ul className="space-y-4 text-sm text-gray-400 font-medium">
+                  <li className="flex gap-3">
+                    <span className="text-accent">•</span> 
+                    إرسال الرسائل الإلكترونية عن طريق الهاتف أو الواتس أب أو البريد الإلكتروني للتذكير.
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-accent">•</span> 
+                    دفع مبلغ الاشتراك مباشرة إلى الحساب البنكي للديوان (دون الحاجة لتحصيل يدوي).
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-accent">•</span> 
+                    توفير الوقت والمال المستخدم في وسائل النقل (السيارة الخاصة أو التاكسي).
+                  </li>
                 </ul>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div className="flex items-center gap-3">
-                  <ShieldCheck size={20} className="text-primary" />
-                  <h4 className="font-bold text-white">الفزعات والمساعدات</h4>
+                  <ShieldCheck size={24} className="text-primary" />
+                  <h4 className="text-lg font-black text-white leading-tight">الفزعات والمساعدات الطارئة</h4>
                 </div>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  تقديم الخدمات للمشتركين بالشكل اللائق، والتواصل المباشر مع اللجنة المسؤولة عن المساعدات عبر الواتس أب الخاص أو الاجتماعات المرتبة.
-                </p>
+                <div className="space-y-4 text-sm text-gray-400 leading-relaxed font-medium">
+                  <p>تقديم الخدمات للمشتركين بالشكل اللائق والمناسب.</p>
+                  <p>التواصل يتم بشكل مباشر مع اللجنة المسؤولة عن تقديم المساعدات في الديوان عبر واتس أب خاص أو ترتيب اجتماع، مما يسهل المبادرة من أصحاب الأيادي البيضاء.</p>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Card 5 */}
+          {/* Section 7: Social Activities */}
           <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
              <div className="flex items-center gap-4">
                <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
                  <Cpu size={24} />
                </div>
-               <h4 className="text-xl font-bold text-white">تنظيم لقاءات وفعاليات اجتماعية</h4>
+               <h4 className="text-xl font-bold text-white leading-tight">تنظيم لقاءات وفعاليات اجتماعية وعالمية</h4>
              </div>
              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
-                   <CheckCircle2 size={16} className="text-primary" />
-                   <span className="text-sm text-gray-300">اجتماعات دورية لرئيس وأعضاء الديوان</span>
+                <div className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group border border-transparent hover:border-white/10 transition-all">
+                   <div className="w-2 h-2 rounded-full bg-primary" />
+                   <span className="text-sm text-gray-300 font-bold">اجتماعات دورية لرئيس وأعضاء الديوان المنتخبين</span>
                 </div>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
-                   <CheckCircle2 size={16} className="text-primary" />
-                   <span className="text-sm text-gray-300">تنظيم اجتماع عائلي سنوي يجمع الكل</span>
+                <div className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group border border-transparent hover:border-white/10 transition-all">
+                   <div className="w-2 h-2 rounded-full bg-primary" />
+                   <span className="text-sm text-gray-300 font-bold">تنظيم اجتماع عائلي سنوي يجمع أكبر نسبة من العائلة</span>
                 </div>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
-                   <CheckCircle2 size={16} className="text-primary" />
-                   <span className="text-sm text-gray-300">مشاركة العائلة في المناسبات الخارجية</span>
+                <div className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group border border-transparent hover:border-white/10 transition-all">
+                   <div className="w-2 h-2 rounded-full bg-primary" />
+                   <span className="text-sm text-gray-300 font-bold">المناسبات المهمة التي تشارك بها العائلة خارجياً</span>
                 </div>
-                <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5">
-                   <CheckCircle2 size={16} className="text-primary" />
-                   <span className="text-sm text-gray-300">الاستفادة من مقترحات أبناء العائلة عالمياً</span>
+                <div className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group border border-transparent hover:border-white/10 transition-all">
+                   <div className="w-2 h-2 rounded-full bg-primary" />
+                   <span className="text-sm text-gray-300 font-bold">الاستفادة من مقترحات أبناء العائلة من أي نقطة في العالم</span>
                 </div>
              </div>
           </div>
@@ -258,11 +291,11 @@ export default function FamilyHistory({ apiBase }) {
 
       {/* Quote */}
       <div className="relative p-12 text-center rounded-[3.5rem] bg-gradient-to-br from-accent/10 via-white/[0.02] to-transparent border border-white/5">
-        <div className="absolute top-0 left-0 p-10 text-7xl text-white/5 font-serif select-none">“</div>
+        <div className="absolute top-0 left-0 p-10 text-7xl text-white/5 font-serif select-none font-black">“</div>
         <p className="relative text-base text-gray-300 max-w-2xl mx-auto leading-relaxed font-bold italic">
-          "اجتهد الأجداد في وضع حجر الأساس... ونحن نكمل المسيرة بحفظ هذا الإرث رقمياً، متمسكين بجذورنا وماضين نحو مستقبل مشرق لأبنائنا."
+          "اجتهد الأجداد في وضع حجر الأساس... وتوجب علينا جميعاً أن نكمل المسيرة بحفظ هذا الإرث متمسكين بجذورنا ومعتمدين على تكنولوجيا عصرنا."
         </p>
-        <div className="absolute bottom-0 right-0 p-10 text-7xl text-white/5 font-serif rotate-180 select-none">“</div>
+        <div className="absolute bottom-0 right-0 p-10 text-7xl text-white/5 font-serif rotate-180 select-none font-black">“</div>
       </div>
     </div>
   );

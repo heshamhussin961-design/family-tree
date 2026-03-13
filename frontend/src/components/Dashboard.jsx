@@ -53,6 +53,12 @@ const ACTION_ITEMS = [
     desc: "صور · مستندات · قصص",
   },
   {
+    path: "/history",
+    icon: <History size={20} />,
+    title: "تاريخ العائلة",
+    desc: "الجذور · الفوائد · الأهداف",
+  },
+  {
     path: "/search",
     icon: <Search size={20} />,
     title: "بحث عن أفراد",
