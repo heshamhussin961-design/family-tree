@@ -352,3 +352,35 @@ class CompetitionResultResponse(CompetitionResultBase):
     id:          int
     created_at:  datetime
     model_config = {"from_attributes": True}
+
+
+# ── Heritage ─────────────────────────────────────────────────────────────────
+
+class HeritageBase(BaseModel):
+    section_key:  str
+    type:         str
+    title:        str
+    subtitle:     Optional[str] = None
+    content:      dict # Flexible JSON
+    icon:         Optional[str] = None
+    order:        int = 0
+    is_visible:   bool = True
+
+class HeritageCreate(HeritageBase):
+    pass
+
+class HeritageUpdate(BaseModel):
+    section_key:  Optional[str] = None
+    type:         Optional[str] = None
+    title:        Optional[str] = None
+    subtitle:     Optional[str] = None
+    content:      Optional[dict] = None
+    icon:         Optional[str] = None
+    order:        Optional[int] = None
+    is_visible:   Optional[bool] = None
+
+class HeritageResponse(HeritageBase):
+    id:          int
+    created_at:  datetime
+
+    model_config = {"from_attributes": True}

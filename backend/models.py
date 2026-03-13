@@ -158,4 +158,16 @@ class CompetitionResult(Base):
     reward         = Column(String, nullable=True) # e.g. 'شهادة تقدير', 'جائزة مالية'
     year           = Column(Integer, nullable=True)
     notes          = Column(String, nullable=True)
-    created_at     = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+class Heritage(Base):
+    __tablename__ = "heritage"
+
+    id           = Column(Integer, primary_key=True, index=True)
+    section_key  = Column(String, unique=True, nullable=False, index=True) # e.g. 'definition', 'benefits', 'roots'
+    type         = Column(String, nullable=False) # 'text', 'points', 'grid', 'list'
+    title        = Column(String, nullable=False)
+    subtitle     = Column(String, nullable=True)
+    content      = Column(JSON, nullable=False) # Stores the flexible data structure
+    icon         = Column(String, nullable=True) # e.g. 'History', 'Users'
+    order        = Column(Integer, default=0)
+    is_visible   = Column(Boolean, default=True)
+    created_at   = Column(DateTime, default=lambda: datetime.now(timezone.utc))

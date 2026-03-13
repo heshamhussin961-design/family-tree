@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import HeritageAdmin from "./HeritageAdmin";
 
 export default function AdminPanel({ apiBase, token, isAdmin, notify }) {
-    const [activeTab, setActiveTab] = useState("pending"); // 'pending' | 'users' | 'logs'
+    const [activeTab, setActiveTab] = useState("pending"); // 'pending' | 'users' | 'logs' | 'heritage'
     const [pendingMembers, setPendingMembers] = useState([]);
     const [users, setUsers] = useState([]);
     const [auditLogs, setAuditLogs] = useState([]);
@@ -196,6 +197,7 @@ export default function AdminPanel({ apiBase, token, isAdmin, notify }) {
                 <div className="flex bg-black bg-opacity-20 rounded-xl p-1 shrink-0">
                     <button onClick={() => setActiveTab("pending")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "pending" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "pending" ? "var(--primary)" : "transparent", color: activeTab === "pending" ? "white" : "var(--text-primary)" }}>طلبات الإضافة {pendingMembers.length > 0 && `(${pendingMembers.length})`}</button>
                     <button onClick={() => setActiveTab("users")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "users" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "users" ? "var(--primary)" : "transparent", color: activeTab === "users" ? "white" : "var(--text-primary)" }}>المستخدمون</button>
+                    <button onClick={() => setActiveTab("heritage")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "heritage" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "heritage" ? "var(--primary)" : "transparent", color: activeTab === "heritage" ? "white" : "var(--text-primary)" }}>إدارة التراث</button>
                     <button onClick={() => setActiveTab("logs")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "logs" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "logs" ? "var(--primary)" : "transparent", color: activeTab === "logs" ? "white" : "var(--text-primary)" }}>سجل التعديلات</button>
                 </div>
             </div>
@@ -378,6 +380,10 @@ export default function AdminPanel({ apiBase, token, isAdmin, notify }) {
                         ))
                     )}
                 </div>
+            )}
+
+            {!loading && activeTab === "heritage" && (
+                <HeritageAdmin apiBase={apiBase} token={token} notify={notify} />
             )}
         </div>
     );
