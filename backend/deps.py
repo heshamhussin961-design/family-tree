@@ -20,10 +20,18 @@ logger = logging.getLogger("family-tree")
 
 # ── Config ────────────────────────────────────────────────────────────────────
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "family2026")
-JWT_SECRET     = os.getenv("JWT_SECRET", "change-me-jwt-secret-key")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
+JWT_SECRET     = os.getenv("JWT_SECRET")
 JWT_ALGORITHM  = "HS256"
 JWT_EXPIRE_H   = 24
+
+if not ADMIN_PASSWORD:
+    logger.warning("ADMIN_PASSWORD not set in environment. Falling back to default for safety during migration.")
+    ADMIN_PASSWORD = "family2026"
+
+if not JWT_SECRET:
+    logger.error("JWT_SECRET is missing! System might be insecure.")
+    JWT_SECRET = "temp-unsafe-secret-key-change-it"
 MAX_LINEAGE_DEPTH = 50
 
 # ── Hashing ───────────────────────────────────────────────────────────────────

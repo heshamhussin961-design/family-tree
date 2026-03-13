@@ -65,10 +65,24 @@ async def log_requests(request: Request, call_next):
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     errors = exc.errors()
     msg = "خطأ في بعض البيانات المُدخلة"
+    
+    FIELD_MAP = {
+        "full_name": "الاسم الكامل",
+        "birth_year": "سنة الميلاد",
+        "death_year": "سنة الوفاة",
+        "parent_id": "الأب المختار",
+        "phone": "رقم الهاتف",
+        "email": "البريد الإلكتروني",
+        "gender": "الجنس",
+        "username": "اسم المستخدم",
+        "password": "كلمة المرور"
+    }
+
     if len(errors) > 0:
         first_err = errors[0]
         field = first_err.get("loc", [""])[-1] if first_err.get("loc") else "حقل"
-        msg = f"خطأ في {field}"
+        arabic_field = FIELD_MAP.get(field, field)
+        msg = f"خطأ في {arabic_field}"
     return JSONResponse(status_code=422, content={"detail": msg})
 
 # Register Routers

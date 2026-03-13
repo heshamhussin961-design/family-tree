@@ -49,7 +49,7 @@ const INITIAL_HERITAGE = [
     id: 'header',
     section_key: "header",
     type: "text",
-    title: "تراث عائلة",
+    title: "تاريخ عائلة",
     subtitle: "آل أبوعلي البيطار",
     content: { text: "نحن لا نوثق مجرد أسماء، بل نحفظ هوية وتاريخ وقصص أجدادنا لنورثها للأجيال القادمة" },
     icon: "History",
@@ -149,7 +149,13 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
         if (heritageRes.ok) {
           const data = await heritageRes.json();
           if (data && data.length > 0) {
-            setHeritage(data);
+            const mappedData = data.map(item => {
+              if (item.section_key === 'header' && (item.title === 'تراث عائلة' || item.title === 'تراث العائلة')) {
+                return { ...item, title: 'تاريخ عائلة' };
+              }
+              return item;
+            });
+            setHeritage(mappedData);
           }
         }
       } catch (e) { 

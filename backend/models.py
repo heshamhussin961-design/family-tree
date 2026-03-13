@@ -9,7 +9,7 @@ class FamilyMember(Base):
     id           = Column(Integer, primary_key=True, index=True)
     full_name    = Column(String, nullable=False, index=True)
     branch_name  = Column(String, nullable=True)
-    parent_id    = Column(Integer, ForeignKey("family_members.id"), nullable=True)
+    parent_id    = Column(Integer, ForeignKey("family_members.id"), nullable=True, index=True)
     image_url    = Column(String, nullable=True)
     gender       = Column(String, nullable=True)   # 'male' | 'female'
     birth_year   = Column(Integer, nullable=True)
