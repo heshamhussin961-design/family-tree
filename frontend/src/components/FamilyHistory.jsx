@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   History,
   Users,
@@ -16,70 +16,10 @@ import {
   Banknote,
   Car,
   Lightbulb,
-  TreePine
-} from "lucide-react";
-
-const DEFINITION = {
-  title: "تعريف شجرة العائلة",
-  concept: "الفكرة من إنشائها:",
-  intro: "شجرة العائلة ليست مجرد أسماء وتواريخ؛ بل لها فوائد عميقة على المستوى النفسي، الاجتماعي، الثقافي، وحتى العملي.",
-  points: [
-    { title: "أولاً: فوائد نفسية وشخصية", content: "مثل: تعزيز الهوية والانتماء، فعندما تعرف من أين أتيت، فإنك تشعر بثبات أكبر وفهم أعمق لذاتك. أيضاً، تقوية الثقة بالنفس ومعرفة قصص نجاح أو صمود أجدادك تعطيك إحساساً بالقوة والاستمرارية. كما توضح فهم الأنماط العائلية التي مارسها أجدادنا، والتي انتقلت إلينا، والتي سوف ننقلها نحن لأبنائنا مثل المهن، الهجرة، الصفات، أو حتى التحديات المتكررة." },
-    { title: "ثانياً: فوائد اجتماعية وعائلية", content: "منها تقوية الروابط بين أفراد العائلة حيث أن الشجرة تصبح مشروعاً مشتركاً يجمع الأجيال. يحفظ الذاكرة العائلية، وقصص الأجداد حتى لا تضيع مع الزمن. وتعليم الأبناء احترام العائلة، فالطفل عندما يرى جذوره يفهم معنى العائلة الممتدة." },
-    { title: "ثالثاً: فوائد ثقافية وتاريخية", content: "توثيق النسب والأصل مهم خصوصاً في المجتمعات العربية. أيضاً حفظ القصص المرتبطة بالأسماء والأماكن. ربط العائلة بتاريخ المكان، المدن والقرى، الهجرة، الأحداث المهمة." },
-    { title: "رابعاً: فوائد تعليمية", content: "تنمية مهارات البحث والتوثيق، تعلم قراءة الوثائق القديمة، فهم التسلسل الزمني (التاريخ)." },
-    { title: "خامساً: فوائد عملية وقانونية (أحياناً)", content: "إثبات صلة القرابة، قضايا الميراث، طلبات جنسية أو إقامة في بعض الدول. توثيق الأنساب رسمياً." },
-    { title: "سادساً: فوائد عاطفية عميقة", content: "مثل إحياء ذكرى من رحلوا، والشعور بالامتنان لهم، وارتباطهم ببعضهم، وإحياء ذكراهم. وذلك من خلال سرد القصص المتعلقة بهم، والامتنان بهذا الامتداد عبر الزمن، والشعور بأننا جزء من قصة كبيرة، نحن الآن نمثل إحدى مراحلها." }
-  ],
-  footer: "هذه الشجرة سوف تبني لنا إرثاً معرفياً يستفيد منها الأبناء والأحفاد.",
-  quote: "خلاصة جميلة: شجرة العائلة تقول: نحن لم نبدأ من الصفر، ولن ننتهي عندنا."
-};
-
-const BENEFITS = {
-  title: "الفائدة من التسجيل والدخول في شجرة العائلة",
-  list: [
-    "إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد فيها",
-    "التعرف على أبناء العم في شتى أنحاء العالم",
-    "الاستفادة من جمع أفراد العائلة تحت مظلة واحدة",
-    "سهولة الوصول إلى المشتركين عن طريق الهاتف المسجل ووسائل التواصل الاجتماعي",
-    "تقديم الخدمات للمشتركين بالشكل المناسب",
-    "الفزعات والمساعدات الطارئة أو الفورية",
-    "الاستفادة من المقترحات الجديدة التي يتقدّم بها أبناء العائلة من أي نقطة في العالم",
-    "تنظيم لقاءات وفعاليات اجتماعية تجمع العائلة من خلال المراسلات الإلكترونية",
-    "مخرجات جديدة"
-  ]
-};
-
-const STORIES = [
-  {
-    title: "إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد",
-    content: [
-      "كل منا يرغب في إظهار هذه العائلة الكريمة بالشكل اللائق بها. فقد اجتهد الأجداد والآباء والأعمام الأولين (رحمهم الله) جميعاً في وضع حجر الأساس في هذا الموضوع، وتوجب علينا جميعاً، أن نكمل المسيرة، ووضع اللبنات في مكانها الصحيح، من أجل الحصول على بناء محترم للعائلة، يتناسب مع تكنولوجيا هذا العصر في زمن الـ AI.",
-      "ترك لنا الأجداد والأعمام، أعرف منهم العم الفاضل/ خليل نمر أبوعلي (رحمه الله)، إرثاً عظيماً، بقي للعام 2000م دون متابعة إلى تاريخنا هذا."
-    ],
-    icon: TreePine
-  },
-  {
-    title: "التعرف على أبناء العم في شتى أنحاء العالم",
-    content: [
-      "بسبب انشغال العديد منا في لقمة العيش، والسعي لذلك عبر السفر إلى بلدان ودول شتى في أنحاء المعمورة، أصبحت الزيارات أقل والتلاقي ليس بالأمر السهل والهيّن، على مستوى العائلة الكبيرة، وحتى أحياناً على مستوى العائلة الصغيرة.",
-      "كما أصبح الكثير منا في هذا الزمن لا يجد الوقت الكافي لزيارة أخاه أو أخته أو حتى ابنته وولده، فما بالك في أبناء العم والعمة، والخال والخالة، وهذا كله من صلة الرحم.",
-      "لذلك، أصبحت متابعة الأهل والأقارب والأسرة الكبيرة على الأقل، عن طريق التكنولوجيا ووسائل التواصل الاجتماعي (الفيسبوك، الواتس أب، الرسائل الإلكترونية) ممكنة، وأسهل بكثير.",
-      "من منا، يحب أن يسمع على الأقل أخبار أبناء العم الآخرين، أماكن تواجدهم، أحوالهم، ويرغب في أن يكون في هذا التجمع، هو من سيسجل معنا في هذه الشجرة، التي أسأل الله العظيم أن تكون شجرة طيبة مثمرة، أصلها ثابت وفرعها في السماء."
-    ],
-    icon: Globe
-  }
-];
-
-const ACCESS_COMMUNICATION = {
-  title: "سهولة الوصول إلى المشتركين",
-  subtitle: "عن طريق الهاتف المسجل ووسائل التواصل الاجتماعي",
-  points: [
-    { text: "إرسال الرسائل الإلكترونية عن طريق الهاتف أو الواتس أب أو البريد الإلكتروني للتذكير.", icon: Phone },
-    { text: "دفع مبلغ الاشتراك مباشرة إلى الحساب البنكي للديوان. (ليس هناك حاجة إلى إرسال شخص لتحصيل المبلغ، أو تحويل من حساب إلى حساب شخص آخر).", icon: Banknote },
-    { text: "توفير الوقت والمال المستخدم في استخدام وسائل النقل. (السيارة الخاصة أو التاكسي).", icon: Car }
-  ]
-};
+  TreePine,
+  Mail,
+  Users2
+} from 'lucide-react';
 
 export default function FamilyHistory({ apiBase }) {
   const [stats, setStats] = useState(null);
@@ -88,214 +28,206 @@ export default function FamilyHistory({ apiBase }) {
     (async () => {
       try {
         const r = await fetch(`${apiBase}/stats`);
-        if (r.ok) setStats(await r.json());
-      } catch (e) { console.error(e); }
+        if (r.ok) {
+          const data = await r.json();
+          setStats(data);
+        }
+      } catch (e) {
+        console.error('Failed to fetch stats', e);
+      }
     })();
   }, [apiBase]);
 
+  const introPoints = [
+    'إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد فيها',
+    'التعرف على أبناء العم في شتى أنحاء العالم',
+    'الاستفادة من جمع أفراد العائلة تحت مظلية واحدة',
+    'سهولة الوصول إلى المشتركين عن طريق الهاتف المسجل ووسائل التواصل الاجتماعي',
+    'تقديم الخدمات للمشتركين بالشكل المناسب',
+    'الفزعات والمساعدات الطارئة أو الفورية',
+    'الاستفادة من المقترحات الجديدة التي ممكن أن يتقدّم بها أبناء العائلة من أي نقطة في العالم',
+    'تنظيم لقاءات وفعاليات اجتماعية تجمع العائلة من خلال المراسلات الإلكترونية',
+    'مخرجات جديدة'
+  ];
+
+  const umbrellaPoints = [
+    { 
+      t: 'سهولة التصويت', 
+      d: 'سهولة التصويت في أي انتخابات داخلية كانت أو خارجية. (بشكل مدروس).',
+      icon: CheckCircle2,
+      color: 'text-green-400'
+    },
+    { 
+      t: 'بطاقات وخدمات', 
+      d: 'الحصول على بطاقات خصومات أو خدمات أو خدمات صحية، بشكل أفضل وأسعار أفضل.',
+      icon: Banknote,
+      color: 'text-blue-400'
+    },
+    { 
+      t: 'الحالات الإنسانية', 
+      d: 'إذا حصل أمراً طارئاً وتطلب متبرعين بالدم، يرسل السيستم رسالة لجميع من يحمل نفس فصيلة الدم (بشكل مدروس).',
+      icon: Heart,
+      color: 'text-red-400'
+    }
+  ];
+
+  const accessPoints = [
+    { t: 'إرسال الرسائل الإلكترونية عن طريق الهاتف أو الواتس أب أو البريد الإلكتروني للتذكير.', icon: Mail },
+    { t: 'دفع مبلغ الاشتراك مباشرة إلى الحساب البنكي للديوان دون الحاجة لمحصلين.', icon: Banknote },
+    { t: 'توفير الوقت والمال المستخدم في استخدام وسائل النقل.', icon: Car }
+  ];
+
+  const socialPoints = [
+    'اجتماعات دورية لرئيس وأعضاء الديوان المنتخب من قبل العائلة الكريمة',
+    'تنظيم اجتماع عائلي سنوي، يجمع أكبر نسبة من العائلة (حتى ولو لمرة واحدة)',
+    'المناسبات المهمة التي ممكن أن تشارك بها العائلة خارجياً',
+    'الاستفادة من مقترحات الجديدة التي ممكن أن يتقدم بها أبناء العائلة من أي نقطة في العالم'
+  ];
+
   return (
-    <div className="animate-fade-in-up space-y-12 pb-10">
-      {/* Header */}
-      <div className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-[#1c1c22] to-[#0c0c0e] border border-white/5 p-8 md:p-12 text-center">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-accent/10 blur-[100px] rounded-full" />
-        <div className="relative inline-flex items-center justify-center w-20 h-20 rounded-[2rem] bg-accent mb-6 shadow-2xl shadow-accent/20">
-          <History size={40} color="#fff" strokeWidth={1.5} />
-        </div>
-        <h2 className="relative font-black text-white mb-2 tracking-tight leading-tight">
-          <span className="block mb-4 text-accent uppercase tracking-widest text-2xl font-bold">تراث عائلة</span>
-          <span className="text-3xl">آل أبوعلي البيطار</span>
-        </h2>
-        <p className="relative text-sm text-gray-400 font-medium max-w-lg mx-auto leading-relaxed">
-          نحن لا نوثق مجرد أسماء، بل نحفظ هوية وتاريخ وقصص أجدادنا لنورثها للأجيال القادمة
-        </p>
-      </div>
-
-      {/* Stats Grid */}
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="card p-8 bg-white/[0.01] border-white/5 flex flex-col items-center text-center group hover:bg-white/[0.03] transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Users size={24} />
-            </div>
-            <div className="text-4xl font-black text-white mb-1">{stats.total}</div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">فرد في العائلة</div>
-          </div>
-          <div className="card p-8 bg-white/[0.01] border-white/5 flex flex-col items-center text-center group hover:bg-white/[0.03] transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-accent/10 text-accent flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Layers size={24} />
-            </div>
-            <div className="text-4xl font-black text-white mb-1">{stats.generations}</div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">من الأجيال</div>
-          </div>
-          <div className="card p-8 bg-white/[0.01] border-white/5 flex flex-col items-center text-center group hover:bg-white/[0.03] transition-all">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Heart size={24} />
-            </div>
-            <div className="text-4xl font-black text-white mb-1">{stats.living}</div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">على قيد الحياة</div>
-          </div>
-        </div>
-      )}
-
-      {/* Benefits Headline Section */}
-      <section className="space-y-10">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-            <Lightbulb size={20} />
-          </div>
-          <h3 className="text-2xl font-black text-white">الفائدة من التسجيل والدخول في شجرة العائلة</h3>
-        </div>
-
-        {/* The 9 Points Summary List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
-          {[
-            "إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد فيها",
-            "التعرف على أبناء العم في شتى أنحاء العالم",
-            "الاستفادة من جمع أفراد العائلة تحت مظلية واحدة",
-            "سهولة الوصول إلى المشتركين عن طريق الهاتف ووسائل التواصل",
-            "تقديم الخدمات للمشتركين بالشكل المناسب",
-            "الفزعات والمساعدات الطارئة أو الفورية",
-            "الاستفادة من المقترحات الجديدة من أي نقطة في العالم",
-            "تنظيم فعاليات اجتماعية عبر المراسلات الإلكترونية",
-            "مخرجات جديدة"
-          ].map((text, i) => (
-            <div key={i} className="flex items-center gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5 group hover:bg-primary/5 transition-all">
-               <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0 group-hover:scale-110 transition-transform">
-                 {i + 1}
-               </div>
-               <span className="text-sm font-bold text-gray-300 group-hover:text-white transition-colors">{text}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 gap-8">
-          {/* Section 2: Roots */}
-          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
-                <TreePine size={24} />
+    <div className='max-w-6xl mx-auto px-6 py-12 space-y-24 text-right' dir='rtl'>
+      <section className='space-y-12'>
+        <div className='space-y-4'>
+          <h3 className='text-4xl font-black text-white mb-8 border-r-4 border-primary pr-6'>
+            الفائدة من التسجيل والدخول في شجرة العائلة
+          </h3>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/[0.02] p-8 rounded-3xl border border-white/5'>
+            {introPoints.map((text, i) => (
+              <div key={i} className='flex items-center gap-4 text-gray-300 font-bold group'>
+                <div className='w-2 h-2 rounded-full bg-accent group-hover:scale-150 transition-transform shrink-0' />
+                <span className='text-lg leading-relaxed'>{text}</span>
               </div>
-              <h4 className="text-xl font-bold text-white leading-tight">إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد</h4>
-            </div>
-            <p className="text-gray-400 leading-loose">
-              كل منا يرغب في إظهار هذه العائلة الكريمة بالشكل اللائق بها. فقد اجتهد الأجداد والآباء والأعمام الأولين (رحمهم الله) جميعاً في وضع حجر الأساس في هذا الموضوع، وتوجب علينا جميعاً، أن نكمل المسيرة، ووضع اللبنات في مكانها الصحيح، من أجل الحصول على بناء محترم للعائلة، يتناسب مع تكنولوجيا هذا العصر في زمن الـ AI.
-              <br /><br />
-              ترك لنا الأجداد والأعمام، أعرف منهم العم الفاضل/ خليل نمر أبوعلي (رحمه الله)، إرثاً عظيماً، بقي للعام 2000م دون متابعة إلى تاريخنا هذا.
-            </p>
-          </div>
-
-          {/* Section 3: Global Connections */}
-          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
-                <Globe size={24} />
-              </div>
-              <h4 className="text-xl font-bold text-white leading-tight">التعرف على أبناء العم في شتى أنحاء العالم</h4>
-            </div>
-            <div className="text-gray-400 space-y-4 leading-loose">
-              <p>بسبب انشغال العديد منا في لقمة العيش، والسعي لذلك عبر السفر إلى بلدان ودول شتى في أنحاء المعمورة، أصبحت الزيارات أقل والتلاقي ليس بالأمر السهل والهيّن، على مستوى العائلة الكبيرة، وحتى أحياناً على مستوى العائلة الصغيرة.</p>
-              <p>كما أصبح الكثير منا في هذا الزمن لا يجد الوقت الكافي لزيارة أخاه أو أخته أو حتى ابنته وولده، فما بالك في أبناء العم والعمة، والخال والخالة، وهذا كله من صلة الرحم.</p>
-              <p>لذلك، أصبحت متابعة الأهل والأقارب والأسرة الكبيرة على الأقل، عن طريق التكنولوجيا ووسائل التواصل الاجتماعي (الفيسبوك، الواتس أب، الرسائل الإلكترونية) ممكنة، وأسهل بكثير.</p>
-              <p>من منا، يحب أن يسمع على الأقل أخبار أبناء العم الآخرين، أماكن تواجدهم، أحوالهم، ويرغب في أن يكون في هذا التجمع، هو من سيسجل معنا في هذه الشجرة، التي أسأل الله العظيم أن تكون شجرة طيبة مثمرة، أصلها ثابت وفرعها في السماء.</p>
-            </div>
-          </div>
-
-          {/* Section 4: Unified Umbrella */}
-          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
-                <Users size={24} />
-              </div>
-              <h4 className="text-xl font-bold text-white leading-tight">الاستفادة من جمع أفراد العائلة تحت مظلية واحدة</h4>
-            </div>
-            <p className="text-gray-300 font-bold mb-4">هناك العديد من الفوائد التي ممكن أن تتحقق من خلال جمع أفراد العائلة الكبيرة تحت مظلية واحدة، منها:</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                { t: "سهولة التصويت", d: "في أي انتخابات داخلية كانت أو خارجية (بشكل مدروس)." },
-                { t: "بطاقات خصومات", d: "الحصول على بطاقات خصومات أو خدمات صحية بشكل أفضل وأسعار أفضل." },
-                { t: "الحالات الإنسانية", d: "في حال الطوارئ، يسهل الوصول للمتبرعين بالدم حسب الفصيلة المسجلة بالسيستم رسالة واحدة تصل للجميع (بشكل مدروس)." }
-              ].map((item, i) => (
-                <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-3 group hover:border-primary/30 transition-all">
-                  <div className="text-primary font-black text-sm uppercase tracking-wider">{item.t}</div>
-                  <p className="text-xs text-gray-400 leading-relaxed font-medium">{item.d}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Section 5: Communication */}
-          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <Phone size={24} className="text-accent" />
-                  <h4 className="text-lg font-black text-white leading-tight">سهولة الوصول والتواصل</h4>
-                </div>
-                <ul className="space-y-4 text-sm text-gray-400 font-medium">
-                  <li className="flex gap-3">
-                    <span className="text-accent">•</span> 
-                    إرسال الرسائل الإلكترونية عن طريق الهاتف أو الواتس أب أو البريد الإلكتروني للتذكير.
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="text-accent">•</span> 
-                    دفع مبلغ الاشتراك مباشرة إلى الحساب البنكي للديوان (دون الحاجة لتحصيل يدوي).
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="text-accent">•</span> 
-                    توفير الوقت والمال المستخدم في وسائل النقل (السيارة الخاصة أو التاكسي).
-                  </li>
-                </ul>
-              </div>
-              <div className="space-y-6">
-                <div className="flex items-center gap-3">
-                  <ShieldCheck size={24} className="text-primary" />
-                  <h4 className="text-lg font-black text-white leading-tight">الفزعات والمساعدات الطارئة</h4>
-                </div>
-                <div className="space-y-4 text-sm text-gray-400 leading-relaxed font-medium">
-                  <p>تقديم الخدمات للمشتركين بالشكل اللائق والمناسب.</p>
-                  <p>التواصل يتم بشكل مباشر مع اللجنة المسؤولة عن تقديم المساعدات في الديوان عبر واتس أب خاص أو ترتيب اجتماع، مما يسهل المبادرة من أصحاب الأيادي البيضاء.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 7: Social Activities */}
-          <div className="card p-8 bg-white/[0.01] border-white/5 space-y-6">
-             <div className="flex items-center gap-4">
-               <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
-                 <Cpu size={24} />
-               </div>
-               <h4 className="text-xl font-bold text-white leading-tight">تنظيم لقاءات وفعاليات اجتماعية وعالمية</h4>
-             </div>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group border border-transparent hover:border-white/10 transition-all">
-                   <div className="w-2 h-2 rounded-full bg-primary" />
-                   <span className="text-sm text-gray-300 font-bold">اجتماعات دورية لرئيس وأعضاء الديوان المنتخبين</span>
-                </div>
-                <div className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group border border-transparent hover:border-white/10 transition-all">
-                   <div className="w-2 h-2 rounded-full bg-primary" />
-                   <span className="text-sm text-gray-300 font-bold">تنظيم اجتماع عائلي سنوي يجمع أكبر نسبة من العائلة</span>
-                </div>
-                <div className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group border border-transparent hover:border-white/10 transition-all">
-                   <div className="w-2 h-2 rounded-full bg-primary" />
-                   <span className="text-sm text-gray-300 font-bold">المناسبات المهمة التي تشارك بها العائلة خارجياً</span>
-                </div>
-                <div className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group border border-transparent hover:border-white/10 transition-all">
-                   <div className="w-2 h-2 rounded-full bg-primary" />
-                   <span className="text-sm text-gray-300 font-bold">الاستفادة من مقترحات أبناء العائلة من أي نقطة في العالم</span>
-                </div>
-             </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Quote */}
-      <div className="relative p-12 text-center rounded-[3.5rem] bg-gradient-to-br from-accent/10 via-white/[0.02] to-transparent border border-white/5">
-        <div className="absolute top-0 left-0 p-10 text-7xl text-white/5 font-serif select-none font-black">“</div>
-        <p className="relative text-base text-gray-300 max-w-2xl mx-auto leading-relaxed font-bold italic">
-          "اجتهد الأجداد في وضع حجر الأساس... وتوجب علينا جميعاً أن نكمل المسيرة بحفظ هذا الإرث متمسكين بجذورنا ومعتمدين على تكنولوجيا عصرنا."
+      <section className='space-y-8 glass-card p-10 rounded-[2.5rem] border border-white/5 relative overflow-hidden group'>
+        <div className='absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[5rem] -mr-10 -mt-10 blur-2xl' />
+        <div className='flex items-center gap-4 mb-6'>
+          <div className='w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:rotate-12 transition-transform'>
+            <TreePine size={28} />
+          </div>
+          <h4 className='text-3xl font-black text-white'>إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد</h4>
+        </div>
+        <div className='space-y-6 text-gray-400 leading-[2] text-xl font-medium max-w-4xl'>
+          <p>
+            كل منا يرغب في إظهار هذه العائلة الكريمة بالشكل اللائق بها. فقد اجتهد الأجداد والآباء والأعمام الأولين (رحمهم الله) جميعاً في وضع حجر الأساس في هذا الموضوع، وتوجب علينا جميعا، أن نكمل المسيرة، ووضع اللبنات في مكانها الصحيح، من أجل الحصول على بناء محترم للعائلة، يتناسب مع تكنولوجيا هذا العصر في زمن الـ AI.
+          </p>
+          <div className='p-6 bg-white/[0.03] rounded-2xl border-r-4 border-accent italic'>
+            "ترك لنا الأجداد والأعمام، أعرف منهم العم الفاضل/ خليل نمر أبوعلي (رحمه الله)، إرثاً عظيماً، بقي للعام 2000م دون متابعة إلى تاريخنا هذا."
+          </div>
+        </div>
+      </section>
+
+      <section className='space-y-8 glass-card p-10 rounded-[2.5rem] border border-white/5 relative overflow-hidden group'>
+        <div className='absolute top-0 left-0 w-32 h-32 bg-accent/5 rounded-br-[5rem] -ml-10 -mt-10 blur-2xl' />
+        <div className='flex items-center gap-4 mb-6'>
+          <div className='w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent group-hover:-rotate-12 transition-transform'>
+            <Globe size={28} />
+          </div>
+          <h4 className='text-3xl font-black text-white'>التعرف على أبناء العم في شتى أنحاء العالم</h4>
+        </div>
+        <div className='space-y-6 text-gray-400 leading-[2] text-xl font-medium max-w-4xl'>
+          <p>
+            بسبب انشغال العديد منا في لقمة العيش، والسعي لذلك عبر السفر إلى بلدان ودول شتى في أنحاء المعمورة، أصبحت الزيارات أقل والتلاقي ليس بالأمر السهل والهيّن، على مستوى العائلة الكبيرة، وحتى أحياناً على مستوى العائلة الصغيرة.
+          </p>
+          <p>
+            كما أصبح الكثير منا في هذا زمن لا يجد الوقت الكافي لزيارة أخاه أو أخته أو حتى ابنته وولده، فما بالك في أبناء العم والعمة، والخال والخالة، وهذا كله من صلة الرحم.
+          </p>
+          <p>
+            لذلك، أصبحت متابعة الأهل والأقارب والأسرة الكبيرة على الأقل، عن طريق التكنولوجيا ووسائل التواصل الاجتماعي (الفيسبوك، الواتس أب، الرسائل الإلكترونية) ممكنة، وأسهل بكثير.
+          </p>
+          <div className='p-8 bg-gradient-to-l from-primary/10 to-transparent rounded-2xl border-r-4 border-primary mt-6'>
+            <p className='text-white font-bold italic'>
+              "من منا، يحب أن يسمع على الأقل أخبار أبناء العم الآخرين، أماكن تواجدهم، أحوالهم، ويرغب في أن يكون في هذا التجمع، هو من سيسجل معنا في هذه الشجرة، التي أسأل الله العظيم أن تكون شجرة طيبة مثمرة، أصلها ثابت وفرعها في السماء."
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className='space-y-8'>
+        <div className='flex items-center gap-4 mb-10'>
+          <div className='w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary'>
+            <Layers size={28} />
+          </div>
+          <h4 className='text-3xl font-black text-white'>الاستفادة من جمع أفراد العائلة تحت مظلية واحدة</h4>
+        </div>
+        <p className='text-gray-300 font-bold text-2xl mb-8 pr-6 border-r-4 border-accent/50'>
+          هناك العديد من الفوائد التي ممكن أن تتحقق من خلال جمع أفراد العائلة الكبيرة تحت مظلية واحدة، منها:
         </p>
-        <div className="absolute bottom-0 right-0 p-10 text-7xl text-white/5 font-serif rotate-180 select-none font-black">“</div>
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+          {umbrellaPoints.map((item, i) => (
+            <div key={i} className='p-8 rounded-[2rem] bg-white/[0.03] border border-white/5 space-y-4 hover:border-primary/40 transition-all hover:-translate-y-2'>
+              <item.icon size={32} className={`${item.color} mb-2`} />
+              <div className='text-2xl font-black text-white'>{item.t}</div>
+              <p className='text-gray-400 leading-relaxed font-bold text-lg'>{item.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
+        <div className='space-y-8 glass-card p-10 rounded-[2.5rem] border border-white/5'>
+          <div className='flex items-center gap-4 mb-6'>
+            <div className='w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent'>
+              <Phone size={28} />
+            </div>
+            <h4 className='text-2xl font-black text-white leading-tight'>سهولة الوصول إلى المشتركين</h4>
+          </div>
+          <p className='text-gray-500 font-bold text-lg mb-6'>عن طريق الهاتف المسجل ووسائل التواصل الاجتماعي</p>
+          <ul className='space-y-6'>
+            {accessPoints.map((point, i) => (
+              <li key={i} className='flex gap-4 group'>
+                <point.icon className='text-accent shrink-0 mt-1' size={24} />
+                <span className='text-xl text-gray-300 font-bold leading-relaxed'>{point.t}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className='space-y-8 glass-card p-10 rounded-[2.5rem] border border-white/5 bg-gradient-to-br from-primary/5 to-transparent'>
+          <div className='flex items-center gap-4 mb-6'>
+            <div className='w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary'>
+              <ShieldCheck size={28} />
+            </div>
+            <h4 className='text-2xl font-black text-white leading-tight'>الفزعات والمساعدات الطارئة</h4>
+          </div>
+          <p className='text-gray-500 font-bold text-lg mb-6'>تقديم الخدمات للمشتركين بالشكل اللائق والمناسب</p>
+          <div className='space-y-6 text-xl text-gray-300 font-bold leading-relaxed'>
+            <p>
+              التواصل مع المعنيين يتم بشكل مباشر مع اللجنة المسؤولة عن تقديم المساعدات في الديوان، ويكون عبر واتس أب خاص بها، أو عبر ترتيب اجتماع معها.
+            </p>
+            <p className='p-4 bg-white/5 rounded-xl border border-white/5'>
+              أو يتم عن طريق الشخص المعني بشكل مباشر، هذا يرجع للمتبرعين (أصحاب الأيادي البيضاء).
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className='space-y-12'>
+        <div className='flex items-center gap-4 mb-10'>
+          <div className='w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent'>
+            <Users2 size={28} />
+          </div>
+          <h4 className='text-3xl font-black text-white'>تنظيم لقاءات وفعاليات اجتماعية تجمع العائلة</h4>
+        </div>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+          {socialPoints.map((text, i) => (
+            <div key={i} className='p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center gap-4 group hover:bg-white/[0.05] transition-all'>
+              <div className='w-3 h-3 rounded-full bg-primary' />
+              <span className='text-xl text-gray-200 font-bold leading-relaxed'>{text}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className='relative p-16 text-center rounded-[4rem] bg-gradient-to-br from-primary/10 via-white/[0.02] to-accent/5 border border-white/10 mt-12'>
+        <div className='absolute top-0 right-0 p-10 text-8xl text-primary/10 font-serif select-none font-black leading-none'>“</div>
+        <p className='relative text-2xl text-white max-w-3xl mx-auto leading-loose font-black italic'>
+          "شجرة العائلة هي مشروعنا المشترك لحفظ الذاكرة، وتقوية الروابط، وبناء مستقبل محترم لأجيالنا القادمة يتناسب مع تكنولوجيا العصر."
+        </p>
+        <div className='absolute bottom-0 left-0 p-10 text-8xl text-accent/10 font-serif rotate-180 select-none font-black leading-none'>“</div>
       </div>
     </div>
   );
