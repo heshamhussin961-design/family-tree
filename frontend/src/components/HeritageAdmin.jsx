@@ -140,30 +140,30 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
         <form onSubmit={handleSave} className="p-6 rounded-xl bg-white/5 border border-white/10 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400">Section Key (Unique)</label>
+              <label className="text-xs font-bold text-gray-400">مفتاح القسم (Section Key - فريد)</label>
               <input 
                 className="input-field w-full" 
                 value={formData.section_key} 
                 onChange={e => setFormData({...formData, section_key: e.target.value})}
-                placeholder="e.g. roots, benefits"
+                placeholder="مثال: roots, history"
                 required
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400">Type</label>
+              <label className="text-xs font-bold text-gray-400">نوع القسم</label>
               <select 
                 className="input-field w-full" 
                 value={formData.type} 
                 onChange={e => setFormData({...formData, type: e.target.value})}
               >
-                <option value="text">Text (Title + Paragraphs)</option>
-                <option value="grid">Grid (Cards with Titles/Desc)</option>
-                <option value="points">Points (Bullet points)</option>
-                <option value="list">List (Simple list items)</option>
+                <option value="text">نص (عنوان + فقرات)</option>
+                <option value="grid">شبكة (كروت مع عناوين ووصف)</option>
+                <option value="points">نقاط (قائمة نقطية)</option>
+                <option value="list">قائمة (عناصر بسيطة)</option>
               </select>
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400">Title (Arabic)</label>
+              <label className="text-xs font-bold text-gray-400">العنوان</label>
               <input 
                 className="input-field w-full" 
                 value={formData.title} 
@@ -172,7 +172,7 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400">Subtitle (Arabic - Optional)</label>
+              <label className="text-xs font-bold text-gray-400">العنوان الفرعي (اختياري)</label>
               <input 
                 className="input-field w-full" 
                 value={formData.subtitle || ""} 
@@ -180,16 +180,16 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400">Icon (Lucide Name)</label>
+              <label className="text-xs font-bold text-gray-400">الأيقونة (اسم من Lucide)</label>
               <input 
                 className="input-field w-full" 
                 value={formData.icon || ""} 
                 onChange={e => setFormData({...formData, icon: e.target.value})}
-                placeholder="History, Users, Globe etc."
+                placeholder="مثال: History, Users, Globe"
               />
             </div>
             <div className="space-y-1">
-              <label className="text-xs font-bold text-gray-400">Order</label>
+              <label className="text-xs font-bold text-gray-400">الترتيب</label>
               <input 
                 type="number" 
                 className="input-field w-full" 
@@ -199,10 +199,10 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
             </div>
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-400">Content (JSON Data)</label>
+            <label className="text-xs font-bold text-gray-400">المحتوى (بيانات JSON)</label>
             <div className="text-[10px] text-gray-500 mb-1 flex items-center gap-1">
               <Info size={12} />
-              text: {"{text: '...', extra: '...'}"} | points: {"{points: ['...', '...']}"} | grid/list: {"{items: [...]}"}
+              نص: {"{text: '...', extra: '...'}"} | نقاط: {"{points: ['...', '...']}"} | شبكة/قائمة: {"{items: [...]}"}
             </div>
             <textarea 
               className="input-field w-full h-40 font-mono text-xs" 
@@ -222,7 +222,7 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
             <label htmlFor="is_visible" className="text-sm font-bold text-gray-300">ظاهر للجمهور</label>
           </div>
           <div className="flex gap-2 pt-2">
-            <button type="submit" className="flex-1 py-2 bg-accent text-white rounded-lg font-bold">حفظ</button>
+            <button type="submit" className="flex-1 py-2 bg-accent text-white rounded-lg font-bold">حفظ التغييرات</button>
             <button 
               type="button" 
               onClick={() => { setEditingId(null); setShowAddForm(false); }}
@@ -244,10 +244,10 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
               <div>
                 <div className="flex items-center gap-2">
                   <h4 className="font-bold text-sm">{s.title}</h4>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-gray-400 uppercase">{s.type}</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-gray-400 uppercase">{s.type === 'text' ? 'نص' : s.type === 'grid' ? 'شبكة' : s.type === 'points' ? 'نقاط' : 'قائمة'}</span>
                   {!s.is_visible && <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">مخفي</span>}
                 </div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Key: {s.section_key} | Order: {s.order}</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">المفتاح: {s.section_key} | الترتيب: {s.order}</div>
               </div>
             </div>
             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
