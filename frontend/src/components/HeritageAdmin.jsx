@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Edit2, Trash2, Plus, ChevronUp, ChevronDown, Check, X, Info } from "lucide-react";
+import { Edit2, Trash2, Plus, X, Info, PlusCircle, MinusCircle } from "lucide-react";
 
 export default function HeritageAdmin({ apiBase, token, notify }) {
   const [sections, setSections] = useState([]);
@@ -10,7 +10,7 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
     type: "text",
     title: "",
     subtitle: "",
-    content: "{}",
+    content: { paragraphs: [""] },
     icon: "",
     order: 0,
     is_visible: true
@@ -38,9 +38,19 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
 
   const handleEdit = (section) => {
     setEditingId(section.id);
+    // Ensure content matches our form structure
+    let content = { ...section.content };
+    if (section.type === 'text' && !content.paragraphs) {
+      content = { paragraphs: [content.text || ""] };
+    } else if ((section.type === 'points' || section.type === 'list') && !content.points && !content.items) {
+      content = { items: [] };
+    } else if (section.type === 'grid' && !content.items) {
+      content = { items: [] };
+    }
+
     setFormData({
       ...section,
-      content: JSON.stringify(section.content, null, 2)
+      content
     });
     setShowAddForm(false);
   };
@@ -48,17 +58,8 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      let parsedContent;
-      try {
-        parsedContent = JSON.parse(formData.content);
-      } catch (err) {
-        if (notify) notify("خطأ في تنسيق JSON", "error");
-        return;
-      }
-
       const body = { 
         ...formData, 
-        content: parsedContent,
         order: parseInt(formData.order) 
       };
       
@@ -79,8 +80,7 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
 
       if (res.ok) {
         if (notify) notify(editingId ? "تم التعديل بنجاح" : "تمت الإضافة بنجاح", "success");
-        setEditingId(null);
-        setShowAddForm(false);
+        resetForm();
         fetchSections();
       } else {
         const data = await res.json();
@@ -89,6 +89,21 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
     } catch (e) {
       if (notify) notify("خطأ في الاتصال", "error");
     }
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setShowAddForm(false);
+    setFormData({
+      section_key: "",
+      type: "text",
+      title: "",
+      subtitle: "",
+      content: { paragraphs: [""] },
+      icon: "",
+      order: sections.length + 1,
+      is_visible: true
+    });
   };
 
   const handleDelete = async (id) => {
@@ -107,6 +122,154 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
     }
   };
 
+  // Helper for dynamic content updates
+  const updateContent = (newContent) => {
+    setFormData({ ...formData, content: { ...formData.content, ...newContent } });
+  };
+
+  // Render the Smart Content Form based on type
+  const renderContentEditor = () => {
+    switch (formData.type) {
+      case 'text':
+        const paras = formData.content.paragraphs || [""];
+        return (
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-gray-400">الفقرات (Paragraphs)</label>
+            {paras.map((p, idx) => (
+              <div key={idx} className="flex gap-2">
+                <textarea 
+                  className="input-field w-full h-24 text-sm"
+                  value={p}
+                  onChange={(e) => {
+                    const newParas = [...paras];
+                    newParas[idx] = e.target.value;
+                    updateContent({ paragraphs: newParas });
+                  }}
+                  placeholder={`الفقرة ${idx + 1}...`}
+                />
+                <button 
+                  type="button"
+                  onClick={() => {
+                    const newParas = paras.filter((_, i) => i !== idx);
+                    updateContent({ paragraphs: newParas.length ? newParas : [""] });
+                  }}
+                  className="p-2 self-start text-gray-500 hover:text-red-500 transition-colors"
+                >
+                  <MinusCircle size={20} />
+                </button>
+              </div>
+            ))}
+            <button 
+              type="button" 
+              onClick={() => updateContent({ paragraphs: [...paras, ""] })}
+              className="flex items-center gap-2 text-xs font-bold text-accent hover:underline px-2"
+            >
+              <PlusCircle size={14} /> إضافة فقرة جديدة
+            </button>
+          </div>
+        );
+
+      case 'points':
+      case 'list':
+        const items = formData.content.points || formData.content.items || [""];
+        const key = formData.type === 'points' ? 'points' : 'items';
+        return (
+          <div className="space-y-3">
+            <label className="text-xs font-bold text-gray-400">العناصر (Items)</label>
+            {items.map((item, idx) => (
+              <div key={idx} className="flex gap-2">
+                <input 
+                  className="input-field w-full"
+                  value={item}
+                  onChange={(e) => {
+                    const newItems = [...items];
+                    newItems[idx] = e.target.value;
+                    updateContent({ [key]: newItems });
+                  }}
+                  placeholder={`العنصر ${idx + 1}...`}
+                />
+                <button 
+                  type="button"
+                  onClick={() => {
+                    const newItems = items.filter((_, i) => i !== idx);
+                    updateContent({ [key]: newItems.length ? newItems : [""] });
+                  }}
+                  className="text-gray-500 hover:text-red-500 transition-colors"
+                >
+                  <MinusCircle size={20} />
+                </button>
+              </div>
+            ))}
+            <button 
+              type="button" 
+              onClick={() => updateContent({ [key]: [...items, ""] })}
+              className="flex items-center gap-2 text-xs font-bold text-accent hover:underline px-2"
+            >
+              <PlusCircle size={14} /> إضافة عنصر جديد
+            </button>
+          </div>
+        );
+
+      case 'grid':
+        const gridItems = formData.content.items || [{ t: "", d: "" }];
+        return (
+          <div className="space-y-4">
+            <label className="text-xs font-bold text-gray-400">الكروت (Cards)</label>
+            {gridItems.map((item, idx) => (
+              <div key={idx} className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-3 relative">
+                <button 
+                  type="button"
+                  onClick={() => {
+                    const newItems = gridItems.filter((_, i) => i !== idx);
+                    updateContent({ items: newItems.length ? newItems : [{ t: "", d: "" }] });
+                  }}
+                  className="absolute top-4 left-4 text-gray-500 hover:text-red-500 transition-colors"
+                >
+                  <MinusCircle size={20} />
+                </button>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-500">عنوان الكرت</label>
+                  <input 
+                    className="input-field w-full"
+                    value={item.t}
+                    onChange={(e) => {
+                      const newItems = [...gridItems];
+                      newItems[idx] = { ...item, t: e.target.value };
+                      updateContent({ items: newItems });
+                    }}
+                    placeholder="مثال: الخدمة الصحية"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-gray-500">وصف الكرت</label>
+                  <textarea 
+                    className="input-field w-full h-16 text-xs"
+                    value={item.d}
+                    onChange={(e) => {
+                      const newItems = [...gridItems];
+                      newItems[idx] = { ...item, d: e.target.value };
+                      updateContent({ items: newItems });
+                    }}
+                    placeholder="اشرح الفائدة هنا..."
+                  />
+                </div>
+              </div>
+            ))}
+            <button 
+              type="button" 
+              onClick={() => updateContent({ items: [...gridItems, { t: "", d: "" }] })}
+              className="flex items-center gap-2 text-xs font-bold text-accent hover:underline px-2"
+            >
+              <PlusCircle size={14} /> إضافة كرت جديد
+            </button>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   if (loading && sections.length === 0) return <div className="p-10 text-center">جاري التحميل...</div>;
 
   return (
@@ -116,17 +279,7 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
         {!showAddForm && !editingId && (
           <button 
             onClick={() => {
-              setEditingId(null);
-              setFormData({
-                section_key: "",
-                type: "text",
-                title: "",
-                subtitle: "",
-                content: "{}",
-                icon: "",
-                order: sections.length + 1,
-                is_visible: true
-              });
+              resetForm();
               setShowAddForm(true);
             }}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold"
@@ -137,7 +290,7 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
       </div>
 
       {(showAddForm || editingId) && (
-        <form onSubmit={handleSave} className="p-6 rounded-xl bg-white/5 border border-white/10 space-y-4">
+        <form onSubmit={handleSave} className="p-6 rounded-xl bg-white/5 border border-white/10 space-y-4 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-xs font-bold text-gray-400">مفتاح القسم (Section Key - فريد)</label>
@@ -154,7 +307,14 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
               <select 
                 className="input-field w-full" 
                 value={formData.type} 
-                onChange={e => setFormData({...formData, type: e.target.value})}
+                onChange={e => {
+                  const newType = e.target.value;
+                  // reset content structure for type
+                  let content = { paragraphs: [""] };
+                  if (newType === 'grid') content = { items: [{ t: "", d: "" }] };
+                  else if (newType === 'points' || newType === 'list') content = { items: [""] };
+                  setFormData({...formData, type: newType, content});
+                }}
               >
                 <option value="text">نص (عنوان + فقرات)</option>
                 <option value="grid">شبكة (كروت مع عناوين ووصف)</option>
@@ -198,20 +358,11 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
               />
             </div>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-gray-400">المحتوى (بيانات JSON)</label>
-            <div className="text-[10px] text-gray-500 mb-1 flex items-center gap-1">
-              <Info size={12} />
-              نص: {"{text: '...', extra: '...'}"} | نقاط: {"{points: ['...', '...']}"} | شبكة/قائمة: {"{items: [...]}"}
-            </div>
-            <textarea 
-              className="input-field w-full h-40 font-mono text-xs" 
-              value={formData.content} 
-              onChange={e => setFormData({...formData, content: e.target.value})}
-              dir="ltr"
-              required
-            />
+
+          <div className="p-4 rounded-xl bg-black/20 border border-white/5 space-y-4">
+            {renderContentEditor()}
           </div>
+
           <div className="flex items-center gap-2">
             <input 
               type="checkbox" 
@@ -222,11 +373,11 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
             <label htmlFor="is_visible" className="text-sm font-bold text-gray-300">ظاهر للجمهور</label>
           </div>
           <div className="flex gap-2 pt-2">
-            <button type="submit" className="flex-1 py-2 bg-accent text-white rounded-lg font-bold">حفظ التغييرات</button>
+            <button type="submit" className="flex-1 py-3 bg-accent text-white rounded-xl font-bold hover:scale-[1.02] transition-transform shadow-lg shadow-accent/20">حفظ التغييرات</button>
             <button 
               type="button" 
-              onClick={() => { setEditingId(null); setShowAddForm(false); }}
-              className="px-6 py-2 bg-white/5 text-gray-400 rounded-lg font-bold border border-white/10"
+              onClick={resetForm}
+              className="px-8 py-3 bg-white/5 text-gray-400 rounded-xl font-bold border border-white/10"
             >
               إلغاء
             </button>
@@ -236,7 +387,7 @@ export default function HeritageAdmin({ apiBase, token, notify }) {
 
       <div className="grid grid-cols-1 gap-4">
         {sections.map((s) => (
-          <div key={s.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between group">
+          <div key={s.id} className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between group hover:bg-white/[0.04] transition-all">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-accent">
                 {s.icon || <Info size={20} />}
