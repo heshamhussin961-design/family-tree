@@ -56,32 +56,23 @@ const INITIAL_HERITAGE = [
     order: 1
   },
   {
-    id: 'roots',
-    section_key: "roots",
+    id: 'roots_history',
+    section_key: "roots_history",
     type: "text",
-    title: "إظهار تاريخ العائلة ومعرفة الجذور الأصيلة لكل فرد",
-    content: {
-      text: "كل منا يرغب في إظهار هذه العائلة الكريمة بالشكل اللائق بها. فقد اجتهد الأجداد والآباء والأعمام الأولين (رحمهم الله) جميعاً في وضع حجر الأساس في هذا الموضوع، وتوجب علينا جميعاً، أن نكمل المسيرة، ووضع اللبنات في مكانها الصحيح، من أجل الحصول على بناء محترم للعائلة، يتناسب مع تكنولوجيا هذا العصر في زمن الـ AI.",
-      extra: "ترك لنا الأجداد والأعمام، أعرف منهم العم الفاضل/ خليل نمر أبوعلي (رحمه الله)، إرثاً عظيماً، بقي للعام 2000م دون متابعة إلى تاريخنا هذا."
-    },
-    icon: "TreePine",
-    order: 2
-  },
-  {
-    id: 'global',
-    section_key: "global_connections",
-    type: "text",
-    title: "التعرف على أبناء العم في شتى أنحاء العالم",
+    title: "تاريخنا وجذورنا حول العالم",
+    subtitle: "نعتز بجذورنا ونصل أرحامنا أينما كانوا",
     content: {
       paragraphs: [
+        "كل منا يرغب في إظهار هذه العائلة الكريمة بالشكل اللائق بها. فقد اجتهد الأجداد والآباء والأعمام الأولين (رحمهم الله) جميعاً في وضع حجر الأساس في هذا الموضوع، وتوجب علينا جميعاً، أن نكمل المسيرة، ووضع اللبنات في مكانها الصحيح، من أجل الحصول على بناء محترم للعائلة، يتناسب مع تكنولوجيا هذا العصر في زمن الـ AI.",
+        "ترك لنا الأجداد والأعمام، أعرف منهم العم الفاضل/ خليل نمر أبوعلي (رحمه الله)، إرثاً عظيماً، بقي للعام 2000م دون متابعة إلى تاريخنا هذا.",
         "بسبب انشغال العديد منا في لقمة العيش، والسعي لذلك عبر السفر إلى بلدان ودول شتى في أنحاء المعمورة، أصبحت الزيارات أقل والتلاقي ليس بالأمر السهل والهيّن، على مستوى العائلة الكبيرة، وحتى أحياناً على مستوى العائلة الصغيرة.",
-        "كما أصبح الكثير منا في هذا الزمن لا يجد الوقت الكافي لزيارة أخاه أو أخته أو حتى ابنته وولده، فما بالك في أبناء العم والعمة، والخال والخالة، وهذا كله من صلة الرحم.",
+        "كما أصبح الكثير منا في هذا زمن لا يجد الوقت الكافي لزيارة أخاه أو أخته أو حتى ابنته وولده، فما بالك في أبناء العم والعمة، والخال والخالة، وهذا كله من صلة الرحم.",
         "لذلك، أصبحت متابعة الأهل والأقارب والأسرة الكبيرة على الأقل، عن طريق التكنولوجيا ووسائل التواصل الاجتماعي (الفيسبوك، الواتس أب، الرسائل الإلكترونية) ممكنة، وأسهل بكثير.",
         "من منا، يحب أن يسمع على الأقل أخبار أبناء العم الآخرين، أماكن تواجدهم، أحوالهم، ويرغب في أن يكون في هذا التجمع، هو من سيسجل معنا في هذه الشجرة، التي أسأل الله العظيم أن تكون شجرة طيبة مثمرة، أصلها ثابت وفرعها في السماء."
       ]
     },
     icon: "Globe",
-    order: 3
+    order: 2
   },
   {
     id: 'umbrella',
@@ -174,10 +165,10 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
     
     // Add Admin Edit Overlay
     const AdminControls = isAdmin && (
-      <div className="absolute top-4 left-4 z-10">
+      <div className="absolute top-4 left-4 z-10 transition-all">
         <button 
           onClick={() => navigate("/admin")}
-          className="p-2 bg-primary/20 text-primary hover:bg-primary hover:text-white rounded-full transition-all border border-primary/30"
+          className="p-2 bg-primary/20 text-primary hover:bg-primary hover:text-white rounded-full transition-all border border-primary/30 shadow-lg shadow-black/20"
           title="تعديل هذا القسم في لوحة التحكم"
         >
           <Edit size={16} />
@@ -187,23 +178,25 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
 
     switch (section.type) {
       case 'text':
-        if (section.section_key === 'quote') return null; // Rendered elsewhere
-        if (section.section_key === 'header') return null; // Rendered elsewhere
+        if (section.section_key === 'quote' || section.section_key === 'header') return null;
 
         return (
-          <div key={section.id} className="relative card p-8 bg-white/[0.01] border-white/5 space-y-6">
+          <div key={section.id} className="relative card p-8 md:p-10 bg-white/[0.01] border-white/5 space-y-6 group hover:border-primary/20 transition-all">
             {AdminControls}
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
                 <Icon size={24} />
               </div>
-              <h4 className="text-xl font-bold text-white leading-tight">{section.title}</h4>
+              <div>
+                <h4 className="text-xl font-bold text-white leading-tight">{section.title}</h4>
+                {section.subtitle && <p className="text-xs text-gray-400 mt-1 font-medium">{section.subtitle}</p>}
+              </div>
             </div>
-            <div className="text-gray-400 leading-loose">
+            <div className="text-gray-400 leading-loose space-y-4">
               {section.content.text && <p>{section.content.text}</p>}
-              {section.content.extra && <p className="mt-4">{section.content.extra}</p>}
+              {section.content.extra && <p className="p-4 rounded-xl bg-white/5 border-r-2 border-primary italic">{section.content.extra}</p>}
               {section.content.paragraphs && section.content.paragraphs.map((p, i) => (
-                <p key={i} className={i > 0 ? "mt-4" : ""}>{p}</p>
+                <p key={i} className="text-sm md:text-base">{p}</p>
               ))}
             </div>
           </div>
@@ -211,7 +204,7 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
 
       case 'grid':
         return (
-          <div key={section.id} className="relative card p-8 bg-white/[0.01] border-white/5 space-y-6">
+          <div key={section.id} className="relative card p-8 bg-white/[0.01] border-white/5 space-y-6 group hover:border-primary/20 transition-all">
             {AdminControls}
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
@@ -222,7 +215,7 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
             {section.subtitle && <p className="text-gray-300 font-bold mb-4">{section.subtitle}</p>}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {section.content.items?.map((item, i) => (
-                <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-3 group hover:border-primary/30 transition-all">
+                <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/5 space-y-3 group/item hover:border-primary/30 transition-all">
                   <div className="text-primary font-black text-sm uppercase tracking-wider">{item.t}</div>
                   <p className="text-xs text-gray-400 leading-relaxed font-medium">{item.d}</p>
                 </div>
@@ -233,7 +226,7 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
 
       case 'points':
         return (
-          <div key={section.id} className="relative card p-8 bg-white/[0.01] border-white/5 space-y-8">
+          <div key={section.id} className="relative card p-8 bg-white/[0.01] border-white/5 space-y-8 group hover:border-primary/20 transition-all">
             {AdminControls}
             <div className="flex items-center gap-3">
               <Icon size={24} className="text-accent" />
@@ -243,8 +236,8 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
             <ul className="space-y-4 text-sm text-gray-400 font-medium">
               {section.content.points?.map((pt, i) => (
                 <li key={i} className="flex gap-3">
-                  <span className="text-accent">•</span> 
-                  {pt}
+                  <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" /> 
+                  <span>{pt}</span>
                 </li>
               ))}
             </ul>
@@ -253,7 +246,7 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
 
       case 'list':
         return (
-          <div key={section.id} className="relative card p-8 bg-white/[0.01] border-white/5 space-y-6">
+          <div key={section.id} className="relative card p-8 bg-white/[0.01] border-white/5 space-y-6 group hover:border-primary/20 transition-all">
             {AdminControls}
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
@@ -263,7 +256,7 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {section.content.items?.map((item, i) => (
-                <div key={i} className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group border border-transparent hover:border-white/10 transition-all">
+                <div key={i} className="flex items-center gap-3 p-5 rounded-xl bg-white/5 group/list border border-transparent hover:border-white/10 transition-all">
                   <div className="w-2 h-2 rounded-full bg-primary" />
                   <span className="text-sm text-gray-300 font-bold">{item}</span>
                 </div>
@@ -279,7 +272,7 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
 
   const header = heritage.find(s => s.section_key === 'header');
   const quote = heritage.find(s => s.section_key === 'quote');
-  const otherSections = heritage.filter(s => s.section_key !== 'header' && s.section_key !== 'quote');
+  const otherSections = heritage.filter(s => s.section_key !== 'header' && s.section_key !== 'quote').sort((a,b) => a.order - b.order);
 
   return (
     <div className="animate-fade-in-up space-y-12 pb-10">
@@ -325,14 +318,14 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
               <Layers size={24} />
             </div>
             <div className="text-4xl font-black text-white mb-1">{stats.generations}</div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">من الأجيال</div>
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">من الأجيال</div>
           </div>
           <div className="card p-8 bg-white/[0.01] border-white/5 flex flex-col items-center text-center group hover:bg-white/[0.03] transition-all">
             <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               <Heart size={24} />
             </div>
             <div className="text-4xl font-black text-white mb-1">{stats.living}</div>
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">على قيد الحياة</div>
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">على قيد الحياة</div>
           </div>
         </div>
       )}
@@ -369,7 +362,7 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
         <div className="flex justify-center pt-8">
           <button 
             onClick={() => navigate("/admin")}
-            className="flex items-center gap-3 px-8 py-4 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-2xl font-bold transition-all border border-primary/20 group text-sm"
+            className="flex items-center gap-3 px-8 py-4 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-2xl font-bold transition-all border border-primary/20 group text-sm shadow-xl shadow-primary/5"
           >
             <PlusCircle size={24} className="group-hover:rotate-90 transition-transform duration-300" />
             <span>إضافة قسم جديد للتراث</span>
