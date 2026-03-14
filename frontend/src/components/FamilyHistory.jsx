@@ -295,7 +295,7 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
             className="flex items-center gap-3 px-8 py-4 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-2xl font-bold transition-all border border-primary/20 group text-sm shadow-xl shadow-primary/5"
           >
             <PlusCircle size={24} className="group-hover:rotate-90 transition-transform duration-300" />
-            <span>إضافة قسم جديد للتراث</span>
+            <span>إضافة قسم جديد</span>
           </button>
         </div>
       )}
