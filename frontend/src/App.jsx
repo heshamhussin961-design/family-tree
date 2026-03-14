@@ -42,7 +42,7 @@ const API_BASE = import.meta.env.VITE_API_BASE ||
 const NAV_ITEMS = [
   { path: "/", label: "الرئيسية", icon: <Home size={18} /> },
   { path: "/tree", label: "شجرة العائلة", icon: <TreePine size={18} /> },
-  { path: "/archive", label: "تاريخ عائلة", icon: <Library size={18} /> },
+  { path: "/archive", label: "تراث عائلة", icon: <Library size={18} /> },
   { path: "/history", label: "تاريخ العائلة", icon: <History size={18} /> },
   { path: "/ambassadors", label: "سفراء العائلة", icon: <Globe size={18} /> },
   { path: "/competitions", label: "مسابقات وجوائز", icon: <Trophy size={18} /> },
@@ -77,7 +77,7 @@ function Navbar({ isAdmin, userInfo, onLogout, onAdminLogin, theme, toggleTheme 
             <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20" style={{ background: "linear-gradient(135deg, var(--primary), var(--primary-dark))" }}>
               <TreePine size={20} color="#fff" />
             </div>
-            <span className="font-extrabold text-lg tracking-tight hidden sm:block text-slate-900 dark:text-white" style={{ color: "var(--text-primary)" }}>شجرة آل أبوعلي البيطار</span>
+            <span className="font-extrabold text-lg tracking-tight hidden sm:block text-slate-900 dark:text-white whitespace-nowrap" style={{ color: "var(--text-primary)" }}>شجرة آل أبوعلي البيطار</span>
           </Link>
 
           {/* Desktop Nav */}
@@ -438,23 +438,9 @@ export default function App() {
             <Route path="/profile/:id" element={
               <PageWrapper>
                 <BackButton />
-                {selected ? (
-                  <div className="space-y-8">
-                    <PersonProfile data={selected} onSelectPerson={handleSelectPerson} onAddDescendant={handleAddDescendant}
-                      apiBase={API_BASE} isAdmin={isAdmin} token={token} userInfo={userInfo} notify={notify} />
-                    <button onClick={() => { setTreeRoot(selected.person); navigate("/tree"); }}
-                      className="w-full sm:w-auto px-6 py-4 bg-primary text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition">
-                      <TreePine size={20} />
-                      عرض في الشجرة
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                    <TreePine size={48} className="mb-4 opacity-20" />
-                    <p>برجاء اختيار شخص من البحث أو الشجرة</p>
-                    <button onClick={() => navigate("/search")} className="mt-4 text-primary font-bold">الذهاب للبحث</button>
-                  </div>
-                )}
+                <ProfileLoader apiBase={API_BASE} token={token} selected={selected} setSelected={setSelected}
+                  onSelectPerson={handleSelectPerson} onAddDescendant={handleAddDescendant}
+                  isAdmin={isAdmin} userInfo={userInfo} notify={notify} navigate={navigate} />
               </PageWrapper>
             } />
 
@@ -532,3 +518,76 @@ function InviteHandler({ handleLogin }) {
     />
   );
 }
+
+function ProfileLoader({ apiBase, token, selected, setSelected, onSelectPerson, onAddDescendant, isAdmin, userInfo, notify, navigate }) {
+  const { id } = useParams();
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!selected || String(selected?.person?.id) !== String(id)) {
+      setLoading(true);
+      setError(false);
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      fetch(`${apiBase}/person/${id}`, { headers })
+        .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+        .then(data => { setSelected(data); setLoading(false); })
+        .catch(() => { setError(true); setLoading(false); });
+    }
+  }, [id]);
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+      <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+      <p>جاري تحميل بيانات الشخص...</p>
+    </div>
+  );
+
+  if (error) return (
+    <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+      <TreePine size={48} className="mb-4 opacity-20" />
+      <p>الشخص غير موجود أو حدث خطأ</p>
+      <button onClick={() => navigate("/search")} className="mt-4 text-primary font-bold">الذهاب للبحث</button>
+    </div>
+  );
+
+  if (!selected) return null;
+
+  return (
+    <div className="space-y-8">
+      <PersonProfile data={selected} onSelectPerson={onSelectPerson} onAddDescendant={onAddDescendant}
+        apiBase={apiBase} isAdmin={isAdmin} token={token} userInfo={userInfo} notify={notify} />
+      <button onClick={() => { navigate("/tree"); }}
+        className="w-full sm:w-auto px-6 py-4 bg-primary text-white rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-primary/30 hover:scale-[1.02] active:scale-[0.98] transition">
+        <TreePine size={20} />
+        عرض في الشجرة
+      </button>
+    </div>
+  );
+}
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(error, info) { console.error("ErrorBoundary caught:", error, info); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ textAlign: "center", padding: "80px 20px", direction: "rtl" }}>
+          <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: "var(--text-primary)" }}>حدث خطأ غير متوقع ⚠️</h2>
+          <p style={{ color: "var(--text-secondary)", marginBottom: "1.5rem" }}>يرجى تحديث الصفحة أو العودة للرئيسية</p>
+          <button onClick={() => { this.setState({ hasError: false }); window.location.href = "/"; }}
+            style={{ padding: "12px 24px", borderRadius: "12px", background: "var(--primary)", color: "#fff", border: "none", cursor: "pointer", fontWeight: "bold" }}>
+            العودة للرئيسية
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export { ErrorBoundary };

@@ -33,9 +33,10 @@ def create_heritage_section(
     
     section = Heritage(**data.model_dump())
     db.add(section)
+    db.flush()
+    log_action(db, admin, "CREATE", "heritage", section.id, new_values=model_to_dict(section))
     db.commit()
     db.refresh(section)
-    log_action(db, admin, "CREATE", "heritage", section.id, new_values=model_to_dict(section))
     return section
 
 @router.put("/heritage/{section_id}", response_model=HeritageResponse)
@@ -62,9 +63,9 @@ def update_heritage_section(
     for key, value in update_data.items():
         setattr(section, key, value)
         
+    log_action(db, admin, "UPDATE", "heritage", section.id, old_values=old_val, new_values=model_to_dict(section))
     db.commit()
     db.refresh(section)
-    log_action(db, admin, "UPDATE", "heritage", section.id, old_values=old_val, new_values=model_to_dict(section))
     return section
 
 @router.delete("/heritage/{section_id}")
@@ -80,6 +81,6 @@ def delete_heritage_section(
         
     old_val = model_to_dict(section)
     db.delete(section)
-    db.commit()
     log_action(db, admin, "DELETE", "heritage", section_id, old_values=old_val)
+    db.commit()
     return {"message": "Section deleted"}

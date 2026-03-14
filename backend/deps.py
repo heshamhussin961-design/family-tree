@@ -26,12 +26,10 @@ JWT_ALGORITHM  = "HS256"
 JWT_EXPIRE_H   = 24
 
 if not ADMIN_PASSWORD:
-    logger.warning("ADMIN_PASSWORD not set in environment. Falling back to default for safety during migration.")
-    ADMIN_PASSWORD = "family2026"
+    raise RuntimeError("ADMIN_PASSWORD is not set in environment! Add it to .env file.")
 
 if not JWT_SECRET:
-    logger.error("JWT_SECRET is missing! System might be insecure.")
-    JWT_SECRET = "temp-unsafe-secret-key-change-it"
+    raise RuntimeError("JWT_SECRET is not set in environment! Add it to .env file.")
 MAX_LINEAGE_DEPTH = 50
 
 # ── Hashing ───────────────────────────────────────────────────────────────────

@@ -3,7 +3,7 @@ export const INITIAL_HERITAGE = [
     id: 'header',
     section_key: "header",
     type: "text",
-    title: "تاريخ عائلة",
+    title: "تراث عائلة",
     subtitle: "آل أبوعلي البيطار",
     content: { text: "نحن لا نوثق مجرد أسماء، بل نحفظ هوية وتاريخ وقصص أجدادنا لنورثها للأجيال القادمة" },
     icon: "History",

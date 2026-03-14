@@ -23,11 +23,14 @@ Base.metadata.create_all(bind=engine)
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("family-tree")
 
+# Enable API docs in development mode only
+IS_DEV = os.getenv("DEV_MODE", "").lower() in ("1", "true", "yes")
+
 app = FastAPI(
     title="Family Tree API",
-    docs_url=None, 
-    redoc_url=None, 
-    openapi_url=None # Hardened: docs disabled by default
+    docs_url="/docs" if IS_DEV else None,
+    redoc_url="/redoc" if IS_DEV else None,
+    openapi_url="/openapi.json" if IS_DEV else None
 )
 
 # CORS Configuration

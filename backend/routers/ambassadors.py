@@ -51,9 +51,10 @@ def create_ambassador(
         is_visible=is_visible
     )
     db.add(amb)
+    db.flush()
+    log_action(db, admin, "CREATE", "ambassadors", amb.id, new_values=model_to_dict(amb))
     db.commit()
     db.refresh(amb)
-    log_action(db, admin, "CREATE", "ambassadors", amb.id, new_values=model_to_dict(amb))
     return amb
 
 @router.put("/ambassadors/{amb_id}", response_model=AmbassadorResponse)
@@ -93,9 +94,9 @@ def update_ambassador(
         dest.write_bytes(file.file.read())
         amb.image_url = f"/uploads/ambassadors/{new_filename}"
         
+    log_action(db, admin, "UPDATE", "ambassadors", amb.id, old_values=old_val, new_values=model_to_dict(amb))
     db.commit()
     db.refresh(amb)
-    log_action(db, admin, "UPDATE", "ambassadors", amb.id, old_values=old_val, new_values=model_to_dict(amb))
     return amb
 
 @router.delete("/ambassadors/{amb_id}")
@@ -113,8 +114,8 @@ def delete_ambassador(amb_id: int, admin: dict = Depends(require_admin), db: Ses
             
     old_val = model_to_dict(amb)
     db.delete(amb)
-    db.commit()
     log_action(db, admin, "DELETE", "ambassadors", amb_id, old_values=old_val)
+    db.commit()
     return {"message": "Ambassador deleted"}
 
 @router.get("/ambassadors/stats")

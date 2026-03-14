@@ -68,9 +68,10 @@ def upload_archive_item(
         is_visible=is_visible
     )
     db.add(item)
+    db.flush()
+    log_action(db, admin, "CREATE", "archive_items", item.id, new_values=model_to_dict(item))
     db.commit()
     db.refresh(item)
-    log_action(db, admin, "CREATE", "archive_items", item.id, new_values=model_to_dict(item))
     return ArchiveItemResponse.model_validate(item)
 
 @router.put("/archive/{item_id}", response_model=ArchiveItemResponse)
@@ -120,9 +121,9 @@ def update_archive_item(
         item.file_url = f"/uploads/archive/{new_filename}"
         item.file_type = file_type
         
+    log_action(db, admin, "UPDATE", "archive_items", item.id, old_values=old_val, new_values=model_to_dict(item))
     db.commit()
     db.refresh(item)
-    log_action(db, admin, "UPDATE", "archive_items", item.id, old_values=old_val, new_values=model_to_dict(item))
     return ArchiveItemResponse.model_validate(item)
 
 @router.delete("/archive/{item_id}")
@@ -141,8 +142,8 @@ def delete_archive_item(item_id: int, admin: dict = Depends(require_admin), db: 
             
     old_val = model_to_dict(item)
     db.delete(item)
-    db.commit()
     log_action(db, admin, "DELETE", "archive_items", item_id, old_values=old_val)
+    db.commit()
     return {"message": "Deleted successfully"}
 
 
@@ -162,9 +163,10 @@ def create_story(payload: StoryCreate, admin: dict = Depends(require_admin), db:
     """Create a new story. Admin only."""
     story = Story(**payload.model_dump())
     db.add(story)
+    db.flush()
+    log_action(db, admin, "CREATE_STORY", "stories", story.id, new_values=model_to_dict(story))
     db.commit()
     db.refresh(story)
-    log_action(db, admin, "CREATE_STORY", "stories", story.id, new_values=model_to_dict(story))
     return story
 
 @router.put("/stories/{story_id}", response_model=StoryResponse)
@@ -179,9 +181,9 @@ def update_story(story_id: int, payload: StoryUpdate, admin: dict = Depends(requ
     for k, v in update_data.items():
         setattr(story, k, v)
         
+    log_action(db, admin, "UPDATE_STORY", "stories", story.id, old_values=old_val, new_values=model_to_dict(story))
     db.commit()
     db.refresh(story)
-    log_action(db, admin, "UPDATE_STORY", "stories", story.id, old_values=old_val, new_values=model_to_dict(story))
     return story
 
 @router.delete("/stories/{story_id}")
@@ -192,8 +194,8 @@ def delete_story(story_id: int, admin: dict = Depends(require_admin), db: Sessio
         raise HTTPException(status_code=404, detail="Story not found")
     old_val = model_to_dict(story)
     db.delete(story)
-    db.commit()
     log_action(db, admin, "DELETE_STORY", "stories", story_id, old_values=old_val)
+    db.commit()
     return {"message": "Story deleted"}
 
 @router.patch("/stories/reorder")

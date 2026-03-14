@@ -87,10 +87,10 @@ def add_spouse(member_id: int, payload: SpouseCreate, db: Session = Depends(get_
 
     spouse = Spouse(**payload.model_dump(), member_id=member_id)
     db.add(spouse)
+    db.flush()
+    log_action(db, user, "ADD_SPOUSE", "spouses", spouse.id, new_values=model_to_dict(spouse))
     db.commit()
     db.refresh(spouse)
-    
-    log_action(db, user, "ADD_SPOUSE", "spouses", spouse.id, new_values=model_to_dict(spouse))
     return spouse
 
 @router.delete("/spouses/{spouse_id}")
@@ -106,9 +106,8 @@ def delete_spouse(spouse_id: int, db: Session = Depends(get_db), user: dict = De
 
     old_val = model_to_dict(spouse)
     db.delete(spouse)
-    db.commit()
-    
     log_action(db, user, "DELETE_SPOUSE", "spouses", spouse_id, old_values=old_val)
+    db.commit()
     return {"detail": "تم الحذف"}
 
 @router.get("/children/{member_id}", response_model=List[SearchResult])
@@ -177,10 +176,9 @@ def create_member(payload: FamilyMemberCreate, request: Request,
             spouse = Spouse(**s_data.model_dump(), member_id=member.id)
             db.add(spouse)
 
+    log_action(db, user, "CREATE", "family_members", member.id, new_values=model_to_dict(member))
     db.commit()
     db.refresh(member)
-    
-    log_action(db, user, "CREATE", "family_members", member.id, new_values=model_to_dict(member))
     
     spouses = db.query(Spouse).filter(Spouse.member_id == member.id).all()
     resp = FamilyMemberDetail.model_validate(member)
@@ -234,13 +232,14 @@ def delete_member(member_id: int, db: Session = Depends(get_db), admin: dict = D
         {FamilyMember.parent_id: member.parent_id}
     )
     db.delete(member)
-    db.commit()
     log_action(db, admin, "DELETE", "family_members", member_id, old_values=old_val)
+    db.commit()
     return {"detail": "تم الحذف", "id": member_id}
 
 @router.post("/members/{member_id}/photo", response_model=FamilyMemberDetail)
-async def upload_photo(member_id: int, request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)):
-    """Upload a profile photo for a member."""
+async def upload_photo(member_id: int, request: Request, file: UploadFile = File(...),
+                       db: Session = Depends(get_db), user: dict = Depends(require_auth)):
+    """Upload a profile photo for a member. Requires authentication."""
     client_ip = request.client.host if request.client else "unknown"
     if not write_limiter.is_allowed(f"photo:{client_ip}"):
         raise HTTPException(status_code=429, detail="رفع صور كثيرة — حاول بعد دقيقة")
@@ -268,14 +267,14 @@ async def upload_photo(member_id: int, request: Request, file: UploadFile = File
     
     old_val = model_to_dict(member)
     member.image_url = f"/uploads/{filename}"
+    log_action(db, user, "UPDATE_PHOTO", "family_members", member.id, old_values=old_val, new_values=model_to_dict(member))
     db.commit()
     db.refresh(member)
-    log_action(db, {"user_id": None, "username": "system"}, "UPDATE_PHOTO", "family_members", member.id, old_values=old_val, new_values=model_to_dict(member))
     return FamilyMemberDetail.model_validate(member)
 
 @router.delete("/members/{member_id}/photo", response_model=FamilyMemberDetail)
-def remove_photo(member_id: int, db: Session = Depends(get_db)):
-    """Remove a profile photo from a member."""
+def remove_photo(member_id: int, db: Session = Depends(get_db), user: dict = Depends(require_auth)):
+    """Remove a profile photo from a member. Requires authentication."""
     member = get_member_or_404(db, member_id)
     if member.image_url:
         filename = member.image_url.split("/")[-1]
@@ -285,7 +284,7 @@ def remove_photo(member_id: int, db: Session = Depends(get_db)):
             
     old_val = model_to_dict(member)
     member.image_url = None
+    log_action(db, user, "DELETE_PHOTO", "family_members", member.id, old_values=old_val, new_values=model_to_dict(member))
     db.commit()
     db.refresh(member)
-    log_action(db, {"user_id": None, "username": "system"}, "DELETE_PHOTO", "family_members", member.id, old_values=old_val, new_values=model_to_dict(member))
     return FamilyMemberDetail.model_validate(member)

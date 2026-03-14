@@ -178,7 +178,7 @@ export default function FamilyArchive({ apiBase, token, isAdmin, notify }) {
       const url = editingStory ? `${apiBase}/stories/${editingStory.id}` : `${apiBase}/stories`;
       const res = await fetch(url, { method, headers, body: JSON.stringify(payload) });
       if (res.ok) {
-        notify(editingStory ? "تمت تعديل القصة" : "تمت إضافة القصة", "success");
+        notify(editingStory ? "تم تعديل الإعلان" : "تمت إضافة الإعلان", "success");
         setStoryTitle(""); setStoryContent(""); setEditingStory(null); setShowStoryForm(false);
         fetchStories();
       }
@@ -186,7 +186,7 @@ export default function FamilyArchive({ apiBase, token, isAdmin, notify }) {
   };
 
   const handleDeleteStory = async (id) => {
-    if (!window.confirm("هل أنت متأكد من حذف هذه القصة؟")) return;
+    if (!window.confirm("هل أنت متأكد من حذف هذا الإعلان؟")) return;
     try {
       const res = await fetch(`${apiBase}/stories/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       if (res.ok) { notify("تم الحذف", "success"); fetchStories(); }
@@ -337,22 +337,22 @@ export default function FamilyArchive({ apiBase, token, isAdmin, notify }) {
             <div className="flex items-center justify-between pb-4 border-b border-white/5">
               <div className="flex items-center gap-3">
                 <BookOpen size={20} className="text-accent" />
-                <h3 className="text-lg font-black text-white">قصص من الذاكرة</h3>
+                <h3 className="text-lg font-black text-white">إعلانات ومناسبات</h3>
               </div>
               {isAdmin && (
                 <button onClick={() => { setShowStoryForm(!showStoryForm); setEditingStory(null); setStoryTitle(""); setStoryContent(""); }}
                   className="px-3 py-1.5 rounded-lg bg-accent/10 text-accent text-[10px] font-black uppercase hover:bg-accent hover:text-white transition-all flex items-center gap-1.5">
                   <Upload size={12} />
-                  إضافة قصة
+                  إضافة إعلان / مناسبة
                 </button>
               )}
             </div>
 
             {isAdmin && (showStoryForm || editingStory) && (
               <form onSubmit={handleStorySubmit} className="p-4 rounded-2xl bg-accent/5 border border-accent/10 space-y-4">
-                <div className="text-[10px] font-black text-accent uppercase tracking-widest">{editingStory ? "تعديل قصة" : "قصة جديدة"}</div>
-                <input type="text" required value={storyTitle} onChange={e => setStoryTitle(e.target.value)} className="input-field text-xs py-2" placeholder="عنوان القصة..." />
-                <textarea required rows={4} value={storyContent} onChange={e => setStoryContent(e.target.value)} className="input-field text-xs py-2 resize-none" placeholder="محتوى القصة..." />
+                <div className="text-[10px] font-black text-accent uppercase tracking-widest">{editingStory ? "تعديل إعلان / مناسبة" : "إعلان / مناسبة جديدة"}</div>
+                <input type="text" required value={storyTitle} onChange={e => setStoryTitle(e.target.value)} className="input-field text-xs py-2" placeholder="عنوان الإعلان / المناسبة..." />
+                <textarea required rows={4} value={storyContent} onChange={e => setStoryContent(e.target.value)} className="input-field text-xs py-2 resize-none" placeholder="تفاصيل الإعلان / المناسبة..." />
                 <div className="flex items-center justify-between pt-2">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" checked={storyVisible} onChange={e => setStoryVisible(e.target.checked)} className="w-4 h-4 rounded border-white/10 bg-white/5 text-accent focus:ring-accent/20" />
@@ -367,7 +367,7 @@ export default function FamilyArchive({ apiBase, token, isAdmin, notify }) {
             )}
 
             <div className="grid gap-4">
-              {stories.length === 0 && <div className="text-center py-10 text-xs text-gray-600">لا توجد قصص بعد</div>}
+              {stories.length === 0 && <div className="text-center py-10 text-xs text-gray-600">لا توجد إعلانات أو مناسبات بعد</div>}
               {stories.map((item, idx) => (
                 <div key={item.id} className={`group p-5 rounded-2xl bg-white/[0.02] border border-white/5 transition-all ${!item.is_visible ? 'opacity-40 grayscale' : 'hover:bg-white/[0.04]'}`}>
                   <div className="flex gap-4">

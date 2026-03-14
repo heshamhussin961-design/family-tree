@@ -33,9 +33,10 @@ def create_competition(
 ):
     comp = Competition(title=title, description=description, is_active=is_active)
     db.add(comp)
+    db.flush()
+    log_action(db, admin, "CREATE", "competitions", comp.id, new_values=model_to_dict(comp))
     db.commit()
     db.refresh(comp)
-    log_action(db, admin, "CREATE", "competitions", comp.id, new_values=model_to_dict(comp))
     return comp
 
 @router.put("/competitions/{comp_id}", response_model=CompetitionResponse)
@@ -55,9 +56,9 @@ def update_competition(
     if description is not None: comp.description = description
     if is_active is not None: comp.is_active = is_active
     
+    log_action(db, admin, "UPDATE", "competitions", comp.id, old_values=old_val, new_values=model_to_dict(comp))
     db.commit()
     db.refresh(comp)
-    log_action(db, admin, "UPDATE", "competitions", comp.id, old_values=old_val, new_values=model_to_dict(comp))
     return comp
 
 @router.delete("/competitions/{comp_id}")
@@ -67,8 +68,8 @@ def delete_competition(comp_id: int, admin: dict = Depends(require_admin), db: S
     
     old_val = model_to_dict(comp)
     db.delete(comp)
-    db.commit()
     log_action(db, admin, "DELETE", "competitions", comp_id, old_values=old_val)
+    db.commit()
     return {"message": "Competition deleted"}
 
 # ── Results ───────────────────────────────────────────────────────────────────
@@ -97,9 +98,10 @@ def create_result(
         status=status, reward=reward, year=year, notes=notes
     )
     db.add(res)
+    db.flush()
+    log_action(db, admin, "CREATE", "competition_results", res.id, new_values=model_to_dict(res))
     db.commit()
     db.refresh(res)
-    log_action(db, admin, "CREATE", "competition_results", res.id, new_values=model_to_dict(res))
     return res
 
 @router.put("/competitions/results/{result_id}", response_model=CompetitionResultResponse)
@@ -125,9 +127,9 @@ def update_result(
     if year is not None: res.year = year
     if notes is not None: res.notes = notes
     
+    log_action(db, admin, "UPDATE", "competition_results", res.id, old_values=old_val, new_values=model_to_dict(res))
     db.commit()
     db.refresh(res)
-    log_action(db, admin, "UPDATE", "competition_results", res.id, old_values=old_val, new_values=model_to_dict(res))
     return res
 
 @router.delete("/competitions/results/{result_id}")
@@ -137,8 +139,8 @@ def delete_result(result_id: int, admin: dict = Depends(require_admin), db: Sess
     
     old_val = model_to_dict(res)
     db.delete(res)
-    db.commit()
     log_action(db, admin, "DELETE", "competition_results", result_id, old_values=old_val)
+    db.commit()
     return {"message": "Result deleted"}
 
 # ── Page Settings ─────────────────────────────────────────────────────────────

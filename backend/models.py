@@ -158,6 +158,9 @@ class CompetitionResult(Base):
     reward         = Column(String, nullable=True) # e.g. 'شهادة تقدير', 'جائزة مالية'
     year           = Column(Integer, nullable=True)
     notes          = Column(String, nullable=True)
+    created_at     = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
 class Heritage(Base):
     __tablename__ = "heritage"
 
