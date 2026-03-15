@@ -457,7 +457,7 @@ export default function App() {
                       <p className="text-xs text-gray-500">سجل بيانات الفرد لتظهر في شجرة العائلة</p>
                     </div>
                   </div>
-                  <AddMemberForm apiBase={API_BASE} parentPerson={parentPerson}
+                  <AddMemberForm apiBase={API_BASE} parentPerson={parentPerson} token={token}
                     onSuccess={(m) => { notify("تم إضافة الفرد بنجاح", "success"); setParentPerson(null); handleSelectPerson(m); }} notify={notify} />
                 </div>
               </PageWrapper>

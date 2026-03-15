@@ -70,7 +70,11 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
     setUploadLoading(true); setUploadError("");
     try {
       const fd = new FormData(); fd.append("file", file);
-      const res = await fetch(`${apiBase}/members/${p.id}/photo`, { method: "POST", body: fd });
+      const res = await fetch(`${apiBase}/members/${p.id}/photo`, { 
+        method: "POST", 
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd 
+      });
       const result = await res.json();
       if (!res.ok) throw new Error(result.detail || "فشل رفع الصورة");
       setLocalImageUrl(result.image_url);
@@ -88,7 +92,10 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
     if (!window.confirm("هل تريد إزالة الصورة؟")) return;
     setUploadLoading(true); setUploadError("");
     try {
-      const res = await fetch(`${apiBase}/members/${p.id}/photo`, { method: "DELETE" });
+      const res = await fetch(`${apiBase}/members/${p.id}/photo`, { 
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
       if (!res.ok) throw new Error("فشل إزالة الصورة");
       setLocalImageUrl(null);
       notify("تم إزالة الصورة", "info");
@@ -274,7 +281,7 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
                 <UserPlus size={18} />
                 <span>إضافة فرد جديد كـ نسل لـ {p.full_name}</span>
               </div>
-              <AddMemberForm apiBase={apiBase} parentPerson={p} onSuccess={() => { notify("تم إضافة الفرد بنجاح", "success"); setShowAddForm(false); }} notify={notify} />
+              <AddMemberForm apiBase={apiBase} parentPerson={p} token={token} onSuccess={() => { notify("تم إضافة الفرد بنجاح", "success"); setShowAddForm(false); }} notify={notify} />
             </div>
           )}
         </div>

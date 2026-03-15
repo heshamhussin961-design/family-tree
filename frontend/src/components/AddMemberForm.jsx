@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 const EMPTY = { full_name: "", branch_name: "", gender: "", birth_year: "", birth_month: "", birth_day: "", death_year: "", death_month: "", death_day: "", is_alive: true, email: "", phone: "", blood_type: "", profession: "", university_degree: "", job_title: "", is_student: false, looking_for_job: false, birth_place: "", residence_place: "", is_married: false, marital_status: "" };
 
-export default function AddMemberForm({ apiBase, onSuccess, parentPerson, notify }) {
+export default function AddMemberForm({ apiBase, token, onSuccess, parentPerson, notify }) {
   const [form, setForm] = useState(EMPTY);
   const [firstName, setFirstName] = useState("");
   const [status, setStatus] = useState(null);
@@ -89,10 +89,25 @@ export default function AddMemberForm({ apiBase, onSuccess, parentPerson, notify
         is_married: !!form.is_married,
         marital_status: form.marital_status || null
       };
-      const res = await fetch(`${apiBase}/members`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const res = await fetch(`${apiBase}/members`, { 
+        method: "POST", 
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        }, 
+        body: JSON.stringify(payload) 
+      });
       if (!res.ok) throw new Error();
       const newMember = await res.json();
-      if (photoFile) { const fd = new FormData(); fd.append("file", photoFile); await fetch(`${apiBase}/members/${newMember.id}/photo`, { method: "POST", body: fd }); }
+      if (photoFile) { 
+        const fd = new FormData(); 
+        fd.append("file", photoFile); 
+        await fetch(`${apiBase}/members/${newMember.id}/photo`, { 
+          method: "POST", 
+          headers: { "Authorization": `Bearer ${token}` },
+          body: fd 
+        }); 
+      }
 
       if (newMember.is_approved === false) {
         setStatus("pending");
