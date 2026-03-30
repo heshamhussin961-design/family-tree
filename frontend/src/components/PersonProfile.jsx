@@ -17,7 +17,8 @@ import {
   Star,
   Check,
   X,
-  Users
+  Users,
+  FileText
 } from "lucide-react";
 import EditMemberModal from "./EditMemberModal.jsx";
 import AddMemberForm from "./AddMemberForm.jsx";
@@ -214,7 +215,20 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
             <InfoCard label="السكن" value={p.residence_place} icon={MapPin} />
             <InfoCard label="المؤهل" value={p.university_degree} icon={GraduationCap} />
             <InfoCard label="المسمى الوظيفي" value={p.job_title} icon={Briefcase} />
+            <InfoCard label="اسم الأم" value={p.mother_name} icon={User} />
           </div>
+
+          {p.biography && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3" style={{ color: "var(--primary)" }}>
+                <FileText size={20} className="opacity-40" />
+                <h3 className="font-black text-sm uppercase tracking-widest">السيرة الذاتية</h3>
+              </div>
+              <div className="card p-5 bg-white/[0.02] border-white/5">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--text-secondary)" }}>{p.biography}</p>
+              </div>
+            </div>
+          )}
 
           {/* Spouses Section */}
           {(p.spouses?.length > 0 || isAdmin) && (

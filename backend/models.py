@@ -33,6 +33,8 @@ class FamilyMember(Base):
     is_married        = Column(Boolean, default=False)    # متزوج؟
     marital_status    = Column(String, nullable=True)     # الحالة الاجتماعية (مطلق، أرمل، إلخ)
     is_public         = Column(Boolean, default=True, nullable=False) # ظهور للزوار؟
+    mother_name       = Column(String, nullable=True)     # اسم الأم
+    biography         = Column(String, nullable=True)     # السيرة الذاتية
 
 
 class AppSetting(Base):

@@ -31,6 +31,8 @@ class FamilyMemberBase(BaseModel):
     looking_for_job:   bool           = False
     is_public:         bool           = True
     marital_status:    Optional[str]  = None
+    mother_name:       Optional[str]  = None
+    biography:         Optional[str]  = None
 
     model_config = {"from_attributes": True}
 
@@ -92,6 +94,8 @@ class FamilyMemberCreate(BaseModel):
     is_married:        bool           = False
     is_public:         bool           = True
     marital_status:    Optional[str]  = Field(None, max_length=50)
+    mother_name:       Optional[str]  = Field(None, max_length=120)
+    biography:         Optional[str]  = Field(None, max_length=5000)
     spouses:           List[SpouseCreate] = []
 
 
@@ -121,6 +125,8 @@ class FamilyMemberUpdate(BaseModel):
     is_married:        Optional[bool] = None
     is_public:         Optional[bool] = None
     marital_status:    Optional[str]  = Field(None, max_length=50)
+    mother_name:       Optional[str]  = Field(None, max_length=120)
+    biography:         Optional[str]  = Field(None, max_length=5000)
 
 
 # ── Auth ──────────────────────────────────────────────────────────────────────

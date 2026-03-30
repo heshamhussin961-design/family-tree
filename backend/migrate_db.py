@@ -40,7 +40,9 @@ def migrate():
             ("residence_place", "TEXT"),
             ("is_married", "BOOLEAN DEFAULT 0"),
             ("marital_status", "TEXT"),
-            ("is_public", "BOOLEAN DEFAULT 1")
+            ("is_public", "BOOLEAN DEFAULT 1"),
+            ("mother_name", "TEXT"),
+            ("biography", "TEXT")
         ]
         
         with engine.connect() as conn:

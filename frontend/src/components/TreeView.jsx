@@ -11,7 +11,10 @@ import {
     Printer,
     Download,
     LayoutGrid,
-    Filter
+    Filter,
+    ZoomIn,
+    ZoomOut,
+    RotateCcw
 } from "lucide-react";
 
 const BAKR_NAME = "بكر";
@@ -66,11 +69,12 @@ function TreeNode({ person, apiBase, token, isAdmin, showFemales, onAddChild, on
                 </div>
                 <div className="mt-2 text-[11px] font-bold text-center direction-rtl max-w-[110px] mx-auto cursor-pointer text-slate-900 dark:text-white hover:text-primary transition-colors print-text-dark"
                     style={{ color: "var(--text-primary)" }}
-                    onClick={() => onViewProfile && onViewProfile(localPerson)}>
-                    {localPerson.full_name}
+                    onClick={() => onViewProfile && onViewProfile(localPerson)}
+                    title={localPerson.full_name}>
+                    {localPerson.full_name?.split(" ")[0] || localPerson.full_name}
                 </div>
                 {s.deceased && (
-                    <div className="text-[9px] text-gray-500 mt-0.5 font-bold">رحمه الله</div>
+                    <div className="mt-0.5 flex justify-center"><span style={{ fontSize: "10px", color: "#000", textShadow: "0 0 2px rgba(0,0,0,0.3)" }}>⚫</span></div>
                 )}
                 {isAdmin && (
                     <button onClick={() => onAddChild(localPerson)} className="mt-2 text-[9px] text-primary bg-transparent border-none cursor-pointer opacity-30 hover:opacity-100 flex items-center justify-center gap-1 w-full transition-opacity">
@@ -97,6 +101,10 @@ export default function TreeView({ apiBase, token, isAdmin, rootPerson, onAddMem
     const [loading, setLoading] = useState(false);
     const [roots, setRoots] = useState(null);
     const [lineageFromProfile, setLineageFromProfile] = useState([]);
+    const [zoom, setZoom] = useState(1);
+    const zoomIn = () => setZoom(prev => Math.min(prev + 0.15, 2.5));
+    const zoomOut = () => setZoom(prev => Math.max(prev - 0.15, 0.3));
+    const zoomReset = () => setZoom(1);
 
     useEffect(() => {
         if (rootPerson) return;
@@ -169,12 +177,10 @@ export default function TreeView({ apiBase, token, isAdmin, rootPerson, onAddMem
                     <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-primary" /> ذكر</div>
                     <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-pink-500" /> أنثى</div>
                     <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-gray-600" /> متوفي</div>
-                    {isAdmin && (
-                        <button onClick={onToggleShowFemales} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/5 text-gray-300 hover:bg-white/10 transition">
-                            <Filter size={12} />
-                            {showFemales ? "إخفاء الإناث" : "إظهار الإناث"}
-                        </button>
-                    )}
+                    <button onClick={onToggleShowFemales} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/5 text-gray-300 hover:bg-white/10 transition">
+                        <Filter size={12} />
+                        {showFemales ? "إخفاء الإناث" : "إظهار الإناث"}
+                    </button>
                 </div>
             </div>
 
@@ -249,8 +255,8 @@ export default function TreeView({ apiBase, token, isAdmin, rootPerson, onAddMem
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <div className={`font-bold text-sm leading-tight transition-colors ${child.is_alive === false ? "text-gray-500" : (child.gender === "female" ? "text-pink-400" : "text-slate-900 dark:text-white group-hover:text-primary")}`} style={{ color: child.is_alive !== false ? "var(--text-primary)" : undefined }}>{child.full_name}</div>
-                                        <div className="text-[10px] text-gray-600 font-bold">{child.is_alive === false ? "رحمه الله" : "عرض النسل"}</div>
+                                        <div className={`font-bold text-sm leading-tight transition-colors ${child.is_alive === false ? "text-gray-500" : (child.gender === "female" ? "text-pink-400" : "text-slate-900 dark:text-white group-hover:text-primary")}`} style={{ color: child.is_alive !== false ? "var(--text-primary)" : undefined }}>{child.full_name?.split(" ")[0] || child.full_name}</div>
+                                        <div className="text-[10px] text-gray-600 font-bold">{child.is_alive === false ? "⚫" : "عرض النسل"}</div>
                                     </div>
                                     <button onClick={() => onViewProfile(child)} className="w-full py-2 rounded-xl bg-white/5 border border-white/5 text-[10px] font-black text-accent hover:bg-white/10 transition">
                                         البيانات الكاملة
@@ -279,7 +285,13 @@ export default function TreeView({ apiBase, token, isAdmin, rootPerson, onAddMem
 
             {!rootPerson && showTree && currentPerson && (
                 <div className="relative p-6 rounded-[2.5rem] bg-white/[0.01] border border-white/5 overflow-auto min-h-[400px]">
-                    <div className="ft-tree">
+                    <div className="sticky top-2 z-20 flex items-center gap-2 mb-4 justify-end">
+                        <button onClick={zoomIn} className="p-2 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition" title="تكبير"><ZoomIn size={18} /></button>
+                        <button onClick={zoomOut} className="p-2 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition" title="تصغير"><ZoomOut size={18} /></button>
+                        <button onClick={zoomReset} className="p-2 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition" title="إعادة الحجم"><RotateCcw size={16} /></button>
+                        <span className="text-[10px] text-gray-500 font-bold">{Math.round(zoom * 100)}%</span>
+                    </div>
+                    <div className="ft-tree" style={{ transform: `scale(${zoom})`, transformOrigin: "top center", transition: "transform 0.3s ease" }}>
                         <TreeNode person={currentPerson} apiBase={apiBase} token={token} isAdmin={isAdmin} showFemales={showFemales} onAddChild={onAddMember} onViewProfile={onViewProfile} />
                     </div>
                 </div>
@@ -302,7 +314,13 @@ export default function TreeView({ apiBase, token, isAdmin, rootPerson, onAddMem
                         </div>
                     )}
                     <div className="relative p-6 rounded-[2.5rem] bg-white/[0.01] border border-white/5 overflow-auto min-h-[400px]">
-                        <div className="ft-tree">
+                        <div className="sticky top-2 z-20 flex items-center gap-2 mb-4 justify-end">
+                            <button onClick={zoomIn} className="p-2 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition" title="تكبير"><ZoomIn size={18} /></button>
+                            <button onClick={zoomOut} className="p-2 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition" title="تصغير"><ZoomOut size={18} /></button>
+                            <button onClick={zoomReset} className="p-2 rounded-xl bg-white/5 border border-white/5 text-gray-400 hover:text-white hover:bg-white/10 transition" title="إعادة الحجم"><RotateCcw size={16} /></button>
+                            <span className="text-[10px] text-gray-500 font-bold">{Math.round(zoom * 100)}%</span>
+                        </div>
+                        <div className="ft-tree" style={{ transform: `scale(${zoom})`, transformOrigin: "top center", transition: "transform 0.3s ease" }}>
                             <TreeNode person={rootPerson} apiBase={apiBase} token={token} isAdmin={isAdmin} showFemales={showFemales} onAddChild={onAddMember} onViewProfile={onViewProfile} />
                         </div>
                     </div>

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import COUNTRIES from "../constants/countries.js";
 
 export default function EditMemberModal({ member, apiBase, token, isAdmin, onSave, onDelete, onClose, notify }) {
   const [form, setForm] = useState({
     full_name: member.full_name || "",
-    branch_name: member.branch_name || "",
     gender: member.gender || "",
     birth_year: member.birth_year || "",
     birth_month: member.birth_month || "",
@@ -22,8 +22,9 @@ export default function EditMemberModal({ member, apiBase, token, isAdmin, onSav
     looking_for_job: member.looking_for_job || false,
     birth_place: member.birth_place || "",
     residence_place: member.residence_place || "",
-    is_married: member.is_married || false,
     marital_status: member.marital_status || "",
+    mother_name: member.mother_name || "",
+    biography: member.biography || "",
     is_public: member.is_public !== undefined ? member.is_public : true
   });
   const [loading, setLoading] = useState(false);
@@ -45,7 +46,6 @@ export default function EditMemberModal({ member, apiBase, token, isAdmin, onSav
         death_month: form.death_month ? parseInt(form.death_month) : null,
         death_day: form.death_day ? parseInt(form.death_day) : null,
         gender: form.gender || null,
-        branch_name: form.branch_name || null,
         email: form.email || null,
         phone: form.phone || null,
         blood_type: form.blood_type || null,
@@ -56,8 +56,9 @@ export default function EditMemberModal({ member, apiBase, token, isAdmin, onSav
         looking_for_job: !!form.looking_for_job,
         birth_place: form.birth_place || null,
         residence_place: form.residence_place || null,
-        is_married: !!form.is_married,
         marital_status: form.marital_status || null,
+        mother_name: form.mother_name || null,
+        biography: form.biography || null,
         is_public: !!form.is_public
       };
       const res = await fetch(`${apiBase}/members/${member.id}`, { method: "PUT", headers, body: JSON.stringify(payload) });
@@ -102,8 +103,8 @@ export default function EditMemberModal({ member, apiBase, token, isAdmin, onSav
 
           <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>الاسم الكامل *</label><input name="full_name" value={form.full_name} onChange={handleChange} className="input-field" /></div>
           <div className="grid grid-cols-2 gap-2">
-            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>الفرع</label><input name="branch_name" value={form.branch_name} onChange={handleChange} className="input-field" /></div>
             <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>النوع</label><select name="gender" value={form.gender} onChange={handleChange} className="input-field"><option value="">—</option><option value="male">ذكر</option><option value="female">أنثى</option></select></div>
+            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>اسم الأم</label><input name="mother_name" value={form.mother_name} onChange={handleChange} className="input-field" placeholder="اسم الأم الكامل" /></div>
           </div>
           <div>
             <label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>الحالة الاجتماعية</label>
@@ -147,8 +148,8 @@ export default function EditMemberModal({ member, apiBase, token, isAdmin, onSav
             <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>المهنة</label><input name="profession" value={form.profession} onChange={handleChange} className="input-field" placeholder="مهندس، طبيب..." /></div>
           </div>
           <div className="grid grid-cols-2 gap-2">
-            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>مكان الميلاد</label><input name="birth_place" value={form.birth_place} onChange={handleChange} className="input-field" placeholder="مثال: القاهرة" /></div>
-            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>مكان الإقامة</label><input name="residence_place" value={form.residence_place} onChange={handleChange} className="input-field" placeholder="مثال: الرياض" /></div>
+            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>مكان الميلاد</label><select name="birth_place" value={form.birth_place} onChange={handleChange} className="input-field"><option value="">—</option>{COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
+            <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>مكان الإقامة</label><select name="residence_place" value={form.residence_place} onChange={handleChange} className="input-field"><option value="">—</option>{COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}</select></div>
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>المؤهل الجامعي</label><input name="university_degree" value={form.university_degree} onChange={handleChange} className="input-field" placeholder="بكالوريوس..." /></div>
@@ -169,13 +170,6 @@ export default function EditMemberModal({ member, apiBase, token, isAdmin, onSav
               </div>
               <span className="text-xs font-semibold" style={{ color: form.looking_for_job ? "var(--accent)" : "var(--text-secondary)" }}>يبحث عن عمل</span>
             </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" name="is_married" checked={form.is_married} onChange={handleChange} className="sr-only peer" />
-              <div className="w-9 h-5 rounded-full transition-colors relative" style={{ background: form.is_married ? "#f472b6" : "#444" }}>
-                <div className="w-4 h-4 bg-white rounded-full shadow absolute top-0.5 transition-all" style={{ left: form.is_married ? "18px" : "2px" }} />
-              </div>
-              <span className="text-xs font-semibold" style={{ color: form.is_married ? "#f472b6" : "var(--text-secondary)" }}>متزوج</span>
-            </label>
             {isAdmin && (
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" name="is_public" checked={form.is_public} onChange={handleChange} className="sr-only peer" />
@@ -185,6 +179,10 @@ export default function EditMemberModal({ member, apiBase, token, isAdmin, onSav
                 <span className="text-xs font-semibold" style={{ color: form.is_public ? "var(--primary)" : "var(--text-secondary)" }}>ظهور عام</span>
               </label>
             )}
+          </div>
+          <div>
+            <label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>السيرة الذاتية</label>
+            <textarea name="biography" value={form.biography} onChange={handleChange} placeholder="اكتب نبذة عن الشخص..." className="input-field" rows={3} style={{ resize: "vertical", minHeight: "70px" }} />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div><label className="text-xs font-semibold mb-1 block" style={{ color: "var(--text-secondary)" }}>الهاتف</label><input name="phone" value={form.phone} onChange={handleChange} className="input-field" /></div>

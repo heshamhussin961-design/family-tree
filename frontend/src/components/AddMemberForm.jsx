@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
+import COUNTRIES from "../constants/countries.js";
 
-const EMPTY = { full_name: "", branch_name: "", gender: "", birth_year: "", birth_month: "", birth_day: "", death_year: "", death_month: "", death_day: "", is_alive: true, email: "", phone: "", blood_type: "", profession: "", university_degree: "", job_title: "", is_student: false, looking_for_job: false, birth_place: "", residence_place: "", is_married: false, marital_status: "" };
+const EMPTY = { full_name: "", gender: "", birth_year: "", birth_month: "", birth_day: "", death_year: "", death_month: "", death_day: "", is_alive: true, email: "", phone: "", blood_type: "", profession: "", university_degree: "", job_title: "", is_student: false, looking_for_job: false, birth_place: "", residence_place: "", marital_status: "", mother_name: "", biography: "" };
 
 export default function AddMemberForm({ apiBase, token, onSuccess, parentPerson, notify }) {
   const [form, setForm] = useState(EMPTY);
@@ -66,7 +67,6 @@ export default function AddMemberForm({ apiBase, token, onSuccess, parentPerson,
     try {
       const payload = {
         full_name: form.full_name.trim(),
-        branch_name: form.branch_name.trim() || null,
         parent_id: parentId || null,
         gender: form.gender || null,
         birth_year: form.birth_year ? parseInt(form.birth_year) : null,
@@ -84,10 +84,11 @@ export default function AddMemberForm({ apiBase, token, onSuccess, parentPerson,
         job_title: form.job_title.trim() || null,
         is_student: !!form.is_student,
         looking_for_job: !!form.looking_for_job,
-        birth_place: form.birth_place.trim() || null,
-        residence_place: form.residence_place.trim() || null,
-        is_married: !!form.is_married,
-        marital_status: form.marital_status || null
+        birth_place: form.birth_place || null,
+        residence_place: form.residence_place || null,
+        marital_status: form.marital_status || null,
+        mother_name: form.mother_name.trim() || null,
+        biography: form.biography.trim() || null
       };
       const res = await fetch(`${apiBase}/members`, { 
         method: "POST", 
@@ -222,8 +223,8 @@ export default function AddMemberForm({ apiBase, token, onSuccess, parentPerson,
         )}
 
         <div className="grid grid-cols-2 gap-3">
-          <div><label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>الفرع</label><input type="text" name="branch_name" value={form.branch_name} onChange={handleChange} placeholder="مثال: فرع حسين" className="input-field" /></div>
           <div><label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>النوع</label><select name="gender" value={form.gender} onChange={handleChange} className="input-field"><option value="">-- اختر --</option><option value="male">ذكر</option><option value="female">أنثى</option></select></div>
+          <div><label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>اسم الأم</label><input type="text" name="mother_name" value={form.mother_name} onChange={handleChange} placeholder="اسم الأم الكامل" className="input-field" /></div>
         </div>
 
         <div>
@@ -253,11 +254,17 @@ export default function AddMemberForm({ apiBase, token, onSuccess, parentPerson,
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>مكان الميلاد</label>
-            <input type="text" name="birth_place" value={form.birth_place} onChange={handleChange} placeholder="مثال: القاهرة، مصر" className="input-field" />
+            <select name="birth_place" value={form.birth_place} onChange={handleChange} className="input-field">
+              <option value="">-- اختر البلد --</option>
+              {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </div>
           <div>
             <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>مكان الإقامة</label>
-            <input type="text" name="residence_place" value={form.residence_place} onChange={handleChange} placeholder="مثال: الرياض، السعودية" className="input-field" />
+            <select name="residence_place" value={form.residence_place} onChange={handleChange} className="input-field">
+              <option value="">-- اختر البلد --</option>
+              {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </div>
         </div>
 
@@ -287,13 +294,11 @@ export default function AddMemberForm({ apiBase, token, onSuccess, parentPerson,
             </div>
             <span className="text-xs font-semibold" style={{ color: form.looking_for_job ? "var(--accent)" : "var(--text-secondary)" }}>يبحث عن عمل</span>
           </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" name="is_married" checked={form.is_married} onChange={e => setForm(p => ({ ...p, is_married: e.target.checked }))} className="sr-only peer" />
-            <div className="w-9 h-5 rounded-full transition-colors relative" style={{ background: form.is_married ? "#f472b6" : "#444" }}>
-              <div className="w-4 h-4 bg-white rounded-full shadow absolute top-0.5 transition-all" style={{ left: form.is_married ? "18px" : "2px" }} />
-            </div>
-            <span className="text-xs font-semibold" style={{ color: form.is_married ? "#f472b6" : "var(--text-secondary)" }}>متزوج</span>
-          </label>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold mb-1.5" style={{ color: "var(--text-secondary)" }}>السيرة الذاتية</label>
+          <textarea name="biography" value={form.biography} onChange={handleChange} placeholder="اكتب نبذة عن الشخص..." className="input-field" rows={3} style={{ resize: "vertical", minHeight: "80px" }} />
         </div>
 
         <div className="flex items-center justify-between p-3 rounded-xl" style={{ background: form.is_alive ? "var(--primary-dim)" : "rgba(255,255,255,0.03)", border: form.is_alive ? "1px solid rgba(16,185,129,0.2)" : "1px solid var(--border)" }}>
