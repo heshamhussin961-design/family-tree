@@ -22,7 +22,7 @@ class FamilyMemberBase(BaseModel):
     is_approved:       bool = True
     birth_place:       Optional[str]  = None
     residence_place:   Optional[str]  = None
-    is_married:        bool           = False
+
     blood_type:        Optional[str]  = None
     profession:        Optional[str]  = None
     university_degree: Optional[str]  = None
@@ -91,7 +91,7 @@ class FamilyMemberCreate(BaseModel):
     looking_for_job:   bool           = False
     birth_place:       Optional[str]  = Field(None, max_length=120)
     residence_place:   Optional[str]  = Field(None, max_length=120)
-    is_married:        bool           = False
+
     is_public:         bool           = True
     marital_status:    Optional[str]  = Field(None, max_length=50)
     mother_name:       Optional[str]  = Field(None, max_length=120)
@@ -122,7 +122,7 @@ class FamilyMemberUpdate(BaseModel):
     looking_for_job:   Optional[bool] = None
     birth_place:       Optional[str]  = Field(None, max_length=120)
     residence_place:   Optional[str]  = Field(None, max_length=120)
-    is_married:        Optional[bool] = None
+
     is_public:         Optional[bool] = None
     marital_status:    Optional[str]  = Field(None, max_length=50)
     mother_name:       Optional[str]  = Field(None, max_length=120)

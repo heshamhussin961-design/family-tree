@@ -363,6 +363,3 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
   );
 }
 
-function useParams() {
-  throw new Error("Function not implemented.");
-}

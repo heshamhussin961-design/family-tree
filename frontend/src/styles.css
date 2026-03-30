@@ -139,6 +139,22 @@ body {
     -moz-appearance: none;
     appearance: none;
   }
+
+  select.input-field option {
+    background: var(--bg-card, #16161a);
+    color: var(--text-primary, #f8fafc);
+    padding: 8px 12px;
+  }
+
+  select.input-field option:hover,
+  select.input-field option:checked {
+    background: var(--primary-dim, rgba(16, 185, 129, 0.15));
+  }
+
+  textarea.input-field {
+    resize: vertical;
+    min-height: 70px;
+  }
 }
 
 /* ── Navbar ── */

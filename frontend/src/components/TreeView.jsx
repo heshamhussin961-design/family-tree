@@ -71,7 +71,7 @@ function TreeNode({ person, apiBase, token, isAdmin, showFemales, onAddChild, on
                     style={{ color: "var(--text-primary)" }}
                     onClick={() => onViewProfile && onViewProfile(localPerson)}
                     title={localPerson.full_name}>
-                    {localPerson.full_name?.split(" ")[0] || localPerson.full_name}
+                    {localPerson.full_name}
                 </div>
                 {s.deceased && (
                     <div className="mt-0.5 flex justify-center"><span style={{ fontSize: "10px", color: "#000", textShadow: "0 0 2px rgba(0,0,0,0.3)" }}>⚫</span></div>
@@ -255,7 +255,7 @@ export default function TreeView({ apiBase, token, isAdmin, rootPerson, onAddMem
                                         </div>
                                     </div>
                                     <div className="space-y-1">
-                                        <div className={`font-bold text-sm leading-tight transition-colors ${child.is_alive === false ? "text-gray-500" : (child.gender === "female" ? "text-pink-400" : "text-slate-900 dark:text-white group-hover:text-primary")}`} style={{ color: child.is_alive !== false ? "var(--text-primary)" : undefined }}>{child.full_name?.split(" ")[0] || child.full_name}</div>
+                                        <div className={`font-bold text-sm leading-tight transition-colors ${child.is_alive === false ? "text-gray-500" : (child.gender === "female" ? "text-pink-400" : "text-slate-900 dark:text-white group-hover:text-primary")}`} style={{ color: child.is_alive !== false ? "var(--text-primary)" : undefined }}>{child.full_name}</div>
                                         <div className="text-[10px] text-gray-600 font-bold">{child.is_alive === false ? "⚫" : "عرض النسل"}</div>
                                     </div>
                                     <button onClick={() => onViewProfile(child)} className="w-full py-2 rounded-xl bg-white/5 border border-white/5 text-[10px] font-black text-accent hover:bg-white/10 transition">
