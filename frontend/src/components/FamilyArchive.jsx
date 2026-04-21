@@ -292,7 +292,7 @@ export default function FamilyArchive({ apiBase, token, isAdmin, notify }) {
           <Library size={40} color="#fff" strokeWidth={1.5} />
         </div>
         <h2 className="relative text-3xl font-black text-white mb-2 tracking-tight leading-tight">
-          <span className="block mb-4">تراث</span>
+          <span className="block mb-4">تاريخ و تراث</span>
           آل أبوعلي البيطار
         </h2>
         <p className="relative text-sm text-gray-500 font-medium max-w-lg mx-auto leading-relaxed">أرشيف عائلي متكامل يحفظ الذاكرة البصرية والوثائقية لآل أبوعلي البيطار عبر الأجيال.</p>
