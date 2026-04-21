@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 
 export default function MembersList({ apiBase, token, onSelectPerson, showFemales }) {
   const [members, setMembers] = useState([]);
@@ -19,6 +19,21 @@ export default function MembersList({ apiBase, token, onSelectPerson, showFemale
       setMembers(!showFemales ? data.filter(m => m.gender !== "female") : data);
       setFetched(true);
     } catch { setError("حدث خطأ"); } finally { setLoading(false); }
+  };
+
+  // Build a lookup map: id -> full_name for showing parent names
+  const memberMap = useMemo(() => {
+    const map = {};
+    members.forEach(m => { map[m.id] = m.full_name; });
+    return map;
+  }, [members]);
+
+  const getParentLabel = (member) => {
+    if (!member.parent_id) return null;
+    const parentName = memberMap[member.parent_id];
+    if (!parentName) return null;
+    const prefix = member.gender === "female" ? "ابنة" : "ابن";
+    return `${prefix} ${parentName}`;
   };
 
   const filtered = members.filter(m => !search.trim() || m.full_name?.includes(search) || m.branch_name?.includes(search));
@@ -58,17 +73,27 @@ export default function MembersList({ apiBase, token, onSelectPerson, showFemale
                   <div key={branch}>
                     <div className="text-xs font-bold px-2 py-1 rounded-md inline-block mb-2" style={{ background: "var(--primary-dim)", color: "var(--primary)" }}>{branch} ({people.length})</div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-                      {people.map(m => (
-                        <button key={m.id} onClick={() => onSelectPerson(m)}
-                          className="card flex items-center gap-3 px-3 py-2 text-right cursor-pointer w-full transition"
-                          style={{ border: "1px solid transparent" }}
-                          onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(16,185,129,0.3)"}
-                          onMouseLeave={e => e.currentTarget.style.borderColor = "transparent"}>
-                          <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-white"
-                            style={{ background: m.gender === "female" ? "#ec4899" : "var(--primary)" }}>{m.full_name?.charAt(0)}</div>
-                          <span className="text-sm font-medium truncate" style={{ color: "var(--text-secondary)" }}>{m.full_name}</span>
-                        </button>
-                      ))}
+                      {people.map(m => {
+                        const parentLabel = getParentLabel(m);
+                        return (
+                          <button key={m.id} onClick={() => onSelectPerson(m)}
+                            className="card flex items-center gap-3 px-3 py-2 text-right cursor-pointer w-full transition"
+                            style={{ border: "1px solid transparent" }}
+                            onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(16,185,129,0.3)"}
+                            onMouseLeave={e => e.currentTarget.style.borderColor = "transparent"}>
+                            <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-white"
+                              style={{ background: m.gender === "female" ? "#ec4899" : "var(--primary)" }}>{m.full_name?.charAt(0)}</div>
+                            <div className="flex-1 min-w-0">
+                              <span className="text-sm font-medium truncate block" style={{ color: "var(--text-secondary)" }}>{m.full_name}</span>
+                              {parentLabel && (
+                                <span className="text-[10px] font-medium truncate block mt-0.5" style={{ color: "var(--accent)" }}>
+                                  {parentLabel}
+                                </span>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
@@ -81,3 +106,4 @@ export default function MembersList({ apiBase, token, onSelectPerson, showFemale
     </div>
   );
 }
+

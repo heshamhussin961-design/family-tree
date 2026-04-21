@@ -74,8 +74,8 @@ export default function FamilyHistory({ apiBase, isAdmin }) {
           }
 
           const mappedData = finalHeritage.map(item => {
-            if (item.section_key === 'header' && (item.title === 'تراث عائلة' || item.title === 'تراث العائلة')) {
-              return { ...item, title: 'تراث عائلة' };
+            if (item.section_key === 'header' && (item.title === 'تراث عائلة' || item.title === 'تراث العائلة' || item.title === 'تاريخ و تراث العائلة')) {
+              return { ...item, title: 'تاريخ و تراث العائلة' };
             }
             return item;
           }).sort((a, b) => (a.order || 0) - (b.order || 0));

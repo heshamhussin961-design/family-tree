@@ -49,13 +49,13 @@ const ACTION_ITEMS = [
   {
     path: "/archive",
     icon: <Library size={20} />,
-    title: "تراث العائلة",
+    title: "تاريخ و تراث العائلة",
     desc: "صور · مستندات · قصص",
   },
   {
     path: "/history",
     icon: <History size={20} />,
-    title: "تاريخ العائلة",
+    title: "مظلة العائلة",
     desc: "الجذور · الفوائد · الأهداف",
   },
   {
