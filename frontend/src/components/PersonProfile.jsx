@@ -182,7 +182,7 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
           </div>
 
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-            {isAdmin && (
+            {(isAdmin || userInfo?.role === "branch_editor") && (
               <button
                 onClick={() => setEditing(true)}
                 className="flex items-center gap-2 px-5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-accent text-sm font-bold transition border border-white/5"
@@ -231,7 +231,7 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
           )}
 
           {/* Spouses Section */}
-          {(p.spouses?.length > 0 || isAdmin) && (
+          {(p.spouses?.length > 0 || isAdmin || userInfo?.role === "branch_editor") && (
             <div className="space-y-4">
               <div className="flex items-center gap-3 text-pink-500">
                 <Heart size={20} fill="currentColor" className="opacity-20" />
@@ -254,12 +254,22 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
                           </div>
                         )}
                       </div>
-                      {isAdmin && (
+                      {(isAdmin || userInfo?.role === "branch_editor") && (
                         <button
                           onClick={async () => {
                             if (!window.confirm("حذف بيانات الزوجة؟")) return;
-                            await fetch(`${apiBase}/spouses/${spouse.id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
-                            setLocalPerson(prev => ({ ...prev, spouses: prev.spouses.filter(s => s.id !== spouse.id) }));
+                            const res = await fetch(`${apiBase}/spouses/${spouse.id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+                            if (res.ok) {
+                                if (isAdmin) {
+                                    setLocalPerson(prev => ({ ...prev, spouses: prev.spouses.filter(s => s.id !== spouse.id) }));
+                                    notify("تم الحذف بنجاح", "success");
+                                } else {
+                                    notify("تم إرسال طلب الحذف للإدارة للموافقة", "info");
+                                }
+                            } else {
+                                const data = await res.json();
+                                notify(data.detail || "حدث خطأ", "error");
+                            }
                           }}
                           className="p-2 opacity-0 group-hover:opacity-100 text-red-500 bg-red-500/10 rounded-lg transition"
                         >
@@ -269,7 +279,7 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
                     </div>
                   </div>
                 ))}
-                {isAdmin && (
+                {(isAdmin || userInfo?.role === "branch_editor") && (
                   <button
                     onClick={() => {
                       const name = prompt(p.gender === "male" ? "اسم الزوجة الكامل:" : "اسم الزوج الكامل:"); if (!name) return;
@@ -277,7 +287,20 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
                         method: "POST",
                         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                         body: JSON.stringify({ full_name: name })
-                      }).then(r => r.json()).then(newSpouse => setLocalPerson(prev => ({ ...prev, spouses: [...(prev.spouses || []), newSpouse] })));
+                      }).then(async r => {
+                          if (r.ok) {
+                              const newSpouse = await r.json();
+                              if (newSpouse.id === 0) {
+                                  notify("تم إرسال طلب إضافة الزوج(ة) للإدارة للموافقة", "info");
+                              } else {
+                                  setLocalPerson(prev => ({ ...prev, spouses: [...(prev.spouses || []), newSpouse] }));
+                                  notify("تم الإضافة بنجاح", "success");
+                              }
+                          } else {
+                              const data = await r.json();
+                              notify(data.detail || "حدث خطأ", "error");
+                          }
+                      });
                     }}
                     className="flex items-center justify-center gap-3 p-4 border-2 border-dashed border-white/5 rounded-[var(--radius-lg)] text-xs font-bold text-gray-500 hover:border-pink-500/30 hover:text-pink-400 transition-all bg-white/[0.01]"
                   >
@@ -355,8 +378,16 @@ export default function PersonProfile({ data, onSelectPerson, onAddDescendant, a
     {editing && (
       <EditMemberModal
         member={localPerson} apiBase={apiBase} token={token} isAdmin={isAdmin} notify={notify}
-        onSave={u => { setLocalPerson(u); setLocalImageUrl(u.image_url); notify("تم تحديث البيانات بنجاح", "success"); }}
-        onDelete={() => { notify("تم حذف العضو بنجاح", "info"); }} onClose={() => setEditing(false)}
+        onSave={u => { 
+            setLocalPerson(u); 
+            setLocalImageUrl(u.image_url); 
+            if (isAdmin) {
+                notify("تم تحديث البيانات بنجاح", "success"); 
+            } else {
+                notify("تم إرسال طلب التعديل للإدارة للموافقة", "info");
+            }
+        }}
+        onDelete={() => { notify("تم الحذف بنجاح", "info"); }} onClose={() => setEditing(false)}
       />
     )}
     </>

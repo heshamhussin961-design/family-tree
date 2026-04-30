@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Depends, Request, UploadFile, File
 from sqlalchemy.orm import Session
 
 from db import get_db
-from models import FamilyMember, Spouse
+from models import FamilyMember, Spouse, PendingModification
 from schemas import (
     SearchResult, FamilyMemberDetail, LineageResponse,
     FamilyMemberCreate, FamilyMemberUpdate, SpouseResponse, SpouseCreate
@@ -84,6 +84,16 @@ def add_spouse(member_id: int, payload: SpouseCreate, db: Session = Depends(get_
     if user["role"] != "admin":
         if not is_descendant_of(db, member_id, user["branch_root_id"]):
             raise HTTPException(status_code=403, detail="ليس لديك صلاحية إضافة زوجة لهذا الشخص")
+        
+        mod = PendingModification(
+            action="ADD_SPOUSE",
+            target_id=member_id,
+            changes=payload.model_dump(),
+            requested_by=user.get("user_id")
+        )
+        db.add(mod)
+        db.commit()
+        return SpouseResponse(id=0, member_id=member_id, **payload.model_dump())
 
     spouse = Spouse(**payload.model_dump(), member_id=member_id)
     db.add(spouse)
@@ -103,6 +113,16 @@ def delete_spouse(spouse_id: int, db: Session = Depends(get_db), user: dict = De
     if user["role"] != "admin":
         if not is_descendant_of(db, spouse.member_id, user["branch_root_id"]):
             raise HTTPException(status_code=403, detail="ليس لديك صلاحية حذف هذه الزوجة")
+        
+        mod = PendingModification(
+            action="DELETE_SPOUSE",
+            target_id=spouse.member_id,
+            changes={"spouse_id": spouse_id},
+            requested_by=user.get("user_id")
+        )
+        db.add(mod)
+        db.commit()
+        return {"detail": "تم إرسال طلب الحذف للأدمن للموافقة"}
 
     old_val = model_to_dict(spouse)
     db.delete(spouse)
@@ -213,6 +233,18 @@ def update_member(member_id: int, payload: FamilyMemberUpdate,
     if user["role"] != "admin":
         if not user.get("branch_root_id") or not is_descendant_of(db, member_id, user["branch_root_id"]):
             raise HTTPException(status_code=403, detail="ليس لديك صلاحية تعديل هذا الشخص — هو خارج فرعك")
+        
+        update_data = payload.model_dump(exclude_unset=True)
+        if update_data:
+            mod = PendingModification(
+                action="UPDATE_MEMBER",
+                target_id=member_id,
+                changes=update_data,
+                requested_by=user.get("user_id")
+            )
+            db.add(mod)
+            db.commit()
+        return FamilyMemberDetail.model_validate(member)
 
     update_data = payload.model_dump(exclude_unset=True)
     for field, value in update_data.items():

@@ -176,3 +176,16 @@ class Heritage(Base):
     order        = Column(Integer, default=0)
     is_visible   = Column(Boolean, default=True)
     created_at   = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+class PendingModification(Base):
+    __tablename__ = "pending_modifications"
+
+    id           = Column(Integer, primary_key=True, index=True)
+    action       = Column(String, nullable=False) # 'UPDATE_MEMBER', 'ADD_SPOUSE', 'DELETE_SPOUSE'
+    target_id    = Column(Integer, nullable=False) # ID of the member
+    changes      = Column(JSON, nullable=False) # The JSON payload of the changes
+    requested_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    status       = Column(String, default="pending") # 'pending', 'approved', 'rejected'
+    created_at   = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+

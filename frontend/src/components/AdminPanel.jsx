@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import HeritageAdmin from "./HeritageAdmin";
 
 export default function AdminPanel({ apiBase, token, isAdmin, notify }) {
-    const [activeTab, setActiveTab] = useState("pending"); // 'pending' | 'users' | 'logs' | 'heritage'
+    const [activeTab, setActiveTab] = useState("pending"); // 'pending' | 'pending_edits' | 'users' | 'logs' | 'heritage' | 'settings'
     const [pendingMembers, setPendingMembers] = useState([]);
+    const [pendingEdits, setPendingEdits] = useState([]);
     const [users, setUsers] = useState([]);
     const [auditLogs, setAuditLogs] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -34,6 +35,9 @@ export default function AdminPanel({ apiBase, token, isAdmin, notify }) {
             if (activeTab === "pending") {
                 const res = await fetch(`${apiBase}/members/pending`, { headers: { "Authorization": `Bearer ${token}` } });
                 if (res.ok) setPendingMembers(await res.json());
+            } else if (activeTab === "pending_edits") {
+                const res = await fetch(`${apiBase}/admin/pending_modifications`, { headers: { "Authorization": `Bearer ${token}` } });
+                if (res.ok) setPendingEdits(await res.json());
             } else if (activeTab === "users") {
                 const res = await fetch(`${apiBase}/users`, { headers: { "Authorization": `Bearer ${token}` } });
                 if (res.ok) setUsers(await res.json());
@@ -45,6 +49,37 @@ export default function AdminPanel({ apiBase, token, isAdmin, notify }) {
             console.error(err);
         }
         setLoading(false);
+    };
+
+    const handleApproveEdit = async (id) => {
+        try {
+            const res = await fetch(`${apiBase}/admin/pending_modifications/${id}/approve`, {
+                method: "PUT",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setPendingEdits(prev => prev.filter(m => m.id !== id));
+                if (notify) notify("تمت الموافقة وتطبيق التعديل بنجاح", "success");
+            } else {
+                if (notify) notify("فشل تطبيق التعديل", "error");
+            }
+        } catch (err) { if (notify) notify("خطأ في الاتصال", "error"); }
+    };
+
+    const handleRejectEdit = async (id) => {
+        if (!window.confirm("هل أنت متأكد من رفض هذا التعديل؟")) return;
+        try {
+            const res = await fetch(`${apiBase}/admin/pending_modifications/${id}/reject`, {
+                method: "PUT",
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setPendingEdits(prev => prev.filter(m => m.id !== id));
+                if (notify) notify("تم رفض التعديل بنجاح", "info");
+            } else {
+                if (notify) notify("فشل رفض التعديل", "error");
+            }
+        } catch (err) { if (notify) notify("خطأ في الاتصال", "error"); }
     };
 
     const handleApprove = async (id) => {
@@ -194,11 +229,13 @@ export default function AdminPanel({ apiBase, token, isAdmin, notify }) {
                     <h2 className="text-xl font-black" style={{ color: "var(--text-primary)" }}>لوحة التحكم والطلبات</h2>
                 </div>
 
-                <div className="flex bg-black bg-opacity-20 rounded-xl p-1 shrink-0">
-                    <button onClick={() => setActiveTab("pending")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "pending" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "pending" ? "var(--primary)" : "transparent", color: activeTab === "pending" ? "white" : "var(--text-primary)" }}>طلبات الإضافة {pendingMembers.length > 0 && `(${pendingMembers.length})`}</button>
+                <div className="flex bg-black bg-opacity-20 rounded-xl p-1 shrink-0 flex-wrap">
+                    <button onClick={() => setActiveTab("pending")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "pending" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "pending" ? "var(--primary)" : "transparent", color: activeTab === "pending" ? "white" : "var(--text-primary)" }}>الإضافات {pendingMembers.length > 0 && `(${pendingMembers.length})`}</button>
+                    <button onClick={() => setActiveTab("pending_edits")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "pending_edits" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "pending_edits" ? "var(--primary)" : "transparent", color: activeTab === "pending_edits" ? "white" : "var(--text-primary)" }}>التعديلات</button>
                     <button onClick={() => setActiveTab("users")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "users" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "users" ? "var(--primary)" : "transparent", color: activeTab === "users" ? "white" : "var(--text-primary)" }}>المستخدمون</button>
-                    <button onClick={() => setActiveTab("heritage")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "heritage" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "heritage" ? "var(--primary)" : "transparent", color: activeTab === "heritage" ? "white" : "var(--text-primary)" }}>إدارة المظلة</button>
-                    <button onClick={() => setActiveTab("logs")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "logs" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "logs" ? "var(--primary)" : "transparent", color: activeTab === "logs" ? "white" : "var(--text-primary)" }}>سجل التعديلات</button>
+                    <button onClick={() => setActiveTab("heritage")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "heritage" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "heritage" ? "var(--primary)" : "transparent", color: activeTab === "heritage" ? "white" : "var(--text-primary)" }}>المظلة</button>
+                    <button onClick={() => setActiveTab("logs")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "logs" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "logs" ? "var(--primary)" : "transparent", color: activeTab === "logs" ? "white" : "var(--text-primary)" }}>السجل</button>
+                    <button onClick={() => setActiveTab("settings")} className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${activeTab === "settings" ? "shadow-md bg-opacity-20" : "opacity-60"}`} style={{ background: activeTab === "settings" ? "var(--primary)" : "transparent", color: activeTab === "settings" ? "white" : "var(--text-primary)" }}>الإعدادات</button>
                 </div>
             </div>
 
@@ -223,6 +260,37 @@ export default function AdminPanel({ apiBase, token, isAdmin, notify }) {
                                 <div className="flex gap-2">
                                     <button onClick={() => handleApprove(m.id)} className="px-4 py-2 rounded-lg text-xs font-bold text-white transition-opacity hover:opacity-80" style={{ background: "#10b981" }}>موافقة وإضافة</button>
                                     <button onClick={() => handleReject(m.id)} className="px-4 py-2 rounded-lg text-xs font-bold text-white transition-opacity hover:opacity-80" style={{ background: "#ef4444" }}>رفض الطلب</button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            )}
+
+            {!loading && activeTab === "pending_edits" && (
+                <div className="space-y-4">
+                    {pendingEdits.length === 0 ? (
+                        <div className="text-center py-12 text-sm font-bold" style={{ color: "var(--text-muted)" }}>لا توجد طلبات تعديل معلقة.</div>
+                    ) : (
+                        pendingEdits.map((m) => (
+                            <div key={m.id} className="p-4 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all" style={{ border: "1px solid var(--border)", background: "var(--bg-card)" }}>
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase text-white bg-blue-500">
+                                            {m.action === "UPDATE_MEMBER" ? "تعديل بيانات" : m.action === "ADD_SPOUSE" ? "إضافة زوجة" : "حذف زوجة"}
+                                        </span>
+                                        <span className="text-xs font-bold" style={{ color: "var(--text-secondary)" }}>بواسطة: {m.requested_by || "مجهول"}</span>
+                                    </div>
+                                    <div className="font-bold text-lg" style={{ color: "var(--primary)" }}>{m.target_name}</div>
+                                    <div className="mt-2 text-xs opacity-80" dir="ltr" style={{ color: "var(--text-secondary)" }}>
+                                        {Object.keys(m.changes).map(key => (
+                                            <div key={key}><strong>{key}</strong>: {String(m.changes[key])}</div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick={() => handleApproveEdit(m.id)} className="px-4 py-2 rounded-lg text-xs font-bold text-white transition-opacity hover:opacity-80" style={{ background: "#10b981" }}>موافقة وتطبيق</button>
+                                    <button onClick={() => handleRejectEdit(m.id)} className="px-4 py-2 rounded-lg text-xs font-bold text-white transition-opacity hover:opacity-80" style={{ background: "#ef4444" }}>رفض التعديل</button>
                                 </div>
                             </div>
                         ))
@@ -384,6 +452,56 @@ export default function AdminPanel({ apiBase, token, isAdmin, notify }) {
 
             {!loading && activeTab === "heritage" && (
                 <HeritageAdmin apiBase={apiBase} token={token} notify={notify} />
+            )}
+
+            {!loading && activeTab === "settings" && (
+                <div className="max-w-md mx-auto p-6 rounded-xl border border-white/10" style={{ background: "var(--bg-card)" }}>
+                    <h3 className="text-lg font-bold mb-4" style={{ color: "var(--text-primary)" }}>تغيير كلمة مرور النظام (أدمن)</h3>
+                    <div className="mb-4">
+                        <label className="block text-xs font-bold mb-2" style={{ color: "var(--text-secondary)" }}>كلمة المرور الجديدة</label>
+                        <input
+                            type="text"
+                            value={newPassword}
+                            onChange={e => setNewPassword(e.target.value)}
+                            placeholder="6 أحرف على الأقل..."
+                            className="input-field w-full py-2"
+                        />
+                    </div>
+                    {resetError && <div className="text-red-500 text-xs mb-4">{resetError}</div>}
+                    {resetSuccess && <div className="text-green-500 text-xs mb-4">{resetSuccess}</div>}
+                    <button
+                        onClick={async () => {
+                            if (!newPassword || newPassword.length < 6) {
+                                setResetError("كلمة المرور يجب أن تكون 6 أحرف على الأقل");
+                                return;
+                            }
+                            setResetLoading(true);
+                            setResetError("");
+                            setResetSuccess("");
+                            try {
+                                const res = await fetch(`${apiBase}/admin/system-password`, {
+                                    method: "PUT",
+                                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                                    body: JSON.stringify({ new_password: newPassword })
+                                });
+                                const data = await res.json();
+                                if (res.ok) {
+                                    setResetSuccess("تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول مجدداً إذا لزم الأمر.");
+                                    setNewPassword("");
+                                    if (notify) notify("تم تحديث كلمة المرور", "success");
+                                } else {
+                                    setResetError(data.detail || "حدث خطأ");
+                                }
+                            } catch (e) { setResetError("خطأ في الاتصال"); }
+                            setResetLoading(false);
+                        }}
+                        disabled={resetLoading}
+                        className="w-full py-3 rounded-xl text-sm font-bold text-white transition hover:opacity-90"
+                        style={{ background: "var(--primary)" }}
+                    >
+                        {resetLoading ? "جاري الحفظ..." : "حفظ كلمة المرور"}
+                    </button>
+                </div>
             )}
         </div>
     );

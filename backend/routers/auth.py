@@ -8,12 +8,12 @@ from db import get_db
 from models import User, Invitation, FamilyMember, AuditLog
 from schemas import (
     LoginRequest, TokenResponse, RegisterRequest, UserResponse,
-    AdminPasswordReset, InvitationCreate, InvitationResponse, InvitationPublic
+    AdminPasswordReset, InvitationCreate, InvitationResponse, InvitationPublic, UserRoleUpdate
 )
 from deps import (
     create_token, pwd_context, write_limiter, 
     ADMIN_USERNAME, ADMIN_PASSWORD, require_auth, require_admin,
-    get_member_or_404
+    get_member_or_404, get_app_setting
 )
 
 router = APIRouter(tags=["Auth & Users"])
@@ -25,9 +25,15 @@ def login(payload: LoginRequest, request: Request, db: Session = Depends(get_db)
         raise HTTPException(status_code=429, detail="محاولات كثيرة — حاول بعد دقيقة")
 
     # Check built-in admin first
-    if payload.username == ADMIN_USERNAME and payload.password == ADMIN_PASSWORD:
-        token = create_token({"sub": payload.username, "role": "admin"})
-        return TokenResponse(access_token=token, role="admin", display_name="أدمن")
+    db_admin_pass = get_app_setting(db, "ADMIN_PASSWORD_HASH")
+    if db_admin_pass:
+        if payload.username == ADMIN_USERNAME and pwd_context.verify(payload.password, db_admin_pass):
+            token = create_token({"sub": payload.username, "role": "admin"})
+            return TokenResponse(access_token=token, role="admin", display_name="أدمن")
+    else:
+        if payload.username == ADMIN_USERNAME and payload.password == ADMIN_PASSWORD:
+            token = create_token({"sub": payload.username, "role": "admin"})
+            return TokenResponse(access_token=token, role="admin", display_name="أدمن")
 
     # Check DB users
     user = db.query(User).filter(User.username == payload.username).first()
@@ -106,6 +112,23 @@ def update_user_password(user_id: int, payload: AdminPasswordReset, admin: dict 
     user.password_hash = pwd_context.hash(payload.new_password)
     db.commit()
     return {"message": "تم تغيير كلمة المرور بنجاح."}
+
+@router.put("/users/{user_id}/role")
+def update_user_role(user_id: int, payload: UserRoleUpdate, admin: dict = Depends(require_admin), db: Session = Depends(get_db)):
+    """Update a user's role or branch assignment. Admin only."""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="المستخدم غير موجود")
+    
+    if payload.role is not None:
+        user.role = payload.role
+    if payload.branch_root_id is not None:
+        user.branch_root_id = payload.branch_root_id
+    elif "branch_root_id" in payload.model_dump(exclude_unset=True) and payload.branch_root_id is None:
+        user.branch_root_id = None
+        
+    db.commit()
+    return {"message": "تم تحديث بيانات المستخدم بنجاح"}
 
 @router.delete("/users/{user_id}")
 def delete_user(user_id: int, admin: dict = Depends(require_admin), db: Session = Depends(get_db)):

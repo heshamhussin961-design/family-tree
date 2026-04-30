@@ -5,11 +5,11 @@ from sqlalchemy import text, func
 from datetime import datetime
 
 from db import get_db
-from models import AuditLog, FamilyMember, AppSetting
-from schemas import AuditLogResponse, RevertRequest, StatsResponse
+from models import AuditLog, FamilyMember, AppSetting, PendingModification, Spouse
+from schemas import AuditLogResponse, RevertRequest, StatsResponse, AdminPasswordReset
 from deps import (
-    require_admin, log_action, get_app_setting, 
-    MAX_LINEAGE_DEPTH
+    require_admin, log_action, get_app_setting, pwd_context,
+    MAX_LINEAGE_DEPTH, model_to_dict
 )
 from gedcom_utils import generate_gedcom
 
@@ -83,6 +83,99 @@ def set_setting(payload: dict, admin: dict = Depends(require_admin), db: Session
         db.add(setting)
     db.commit()
     return {"key": key, "value": value}
+
+@router.put("/admin/system-password")
+def change_system_password(payload: AdminPasswordReset, admin: dict = Depends(require_admin), db: Session = Depends(get_db)):
+    """Change the master admin password. Admin only."""
+    hashed = pwd_context.hash(payload.new_password)
+    setting = db.query(AppSetting).filter(AppSetting.key == "ADMIN_PASSWORD_HASH").first()
+    if setting:
+        setting.value = hashed
+    else:
+        setting = AppSetting(key="ADMIN_PASSWORD_HASH", value=hashed)
+        db.add(setting)
+    db.commit()
+    return {"message": "تم تغيير كلمة مرور الأدمن بنجاح"}
+
+@router.get("/admin/pending_modifications")
+def get_pending_modifications(admin: dict = Depends(require_admin), db: Session = Depends(get_db)):
+    """List all pending edit requests."""
+    mods = db.query(PendingModification).filter(PendingModification.status == "pending").order_by(PendingModification.created_at.desc()).all()
+    result = []
+    for m in mods:
+        # Get target member info for display context
+        member = None
+        if m.action == "DELETE_SPOUSE" or m.action == "ADD_SPOUSE":
+            member = db.query(FamilyMember).filter(FamilyMember.id == m.target_id).first()
+        elif m.action == "UPDATE_MEMBER":
+            member = db.query(FamilyMember).filter(FamilyMember.id == m.target_id).first()
+            
+        result.append({
+            "id": m.id,
+            "action": m.action,
+            "target_id": m.target_id,
+            "changes": m.changes,
+            "requested_by": m.requested_by,
+            "status": m.status,
+            "created_at": m.created_at.isoformat(),
+            "target_name": member.full_name if member else "غير معروف"
+        })
+    return result
+
+@router.put("/admin/pending_modifications/{mod_id}/approve")
+def approve_pending_modification(mod_id: int, admin: dict = Depends(require_admin), db: Session = Depends(get_db)):
+    """Approve and apply a pending modification."""
+    mod = db.query(PendingModification).filter(PendingModification.id == mod_id).first()
+    if not mod or mod.status != "pending":
+        raise HTTPException(status_code=404, detail="الطلب غير موجود أو تمت معالجته مسبقاً")
+
+    if mod.action == "UPDATE_MEMBER":
+        member = db.query(FamilyMember).filter(FamilyMember.id == mod.target_id).first()
+        if not member:
+            mod.status = "rejected"
+            db.commit()
+            raise HTTPException(status_code=404, detail="العضو غير موجود")
+        old_val = model_to_dict(member)
+        for field, value in mod.changes.items():
+            setattr(member, field, value)
+        log_action(db, admin, "APPROVE_UPDATE", "family_members", member.id, old_values=old_val, new_values=model_to_dict(member))
+        
+    elif mod.action == "ADD_SPOUSE":
+        member = db.query(FamilyMember).filter(FamilyMember.id == mod.target_id).first()
+        if not member:
+            mod.status = "rejected"
+            db.commit()
+            raise HTTPException(status_code=404, detail="العضو غير موجود")
+        spouse = Spouse(**mod.changes, member_id=mod.target_id)
+        db.add(spouse)
+        db.flush()
+        log_action(db, admin, "APPROVE_ADD_SPOUSE", "spouses", spouse.id, new_values=model_to_dict(spouse))
+        
+    elif mod.action == "DELETE_SPOUSE":
+        spouse_id = mod.changes.get("spouse_id")
+        spouse = db.query(Spouse).filter(Spouse.id == spouse_id).first()
+        if not spouse:
+            mod.status = "rejected"
+            db.commit()
+            raise HTTPException(status_code=404, detail="الزوجة غير موجودة")
+        old_val = model_to_dict(spouse)
+        db.delete(spouse)
+        log_action(db, admin, "APPROVE_DELETE_SPOUSE", "spouses", spouse_id, old_values=old_val)
+
+    mod.status = "approved"
+    db.commit()
+    return {"message": "تمت الموافقة وتطبيق التعديل بنجاح"}
+
+@router.put("/admin/pending_modifications/{mod_id}/reject")
+def reject_pending_modification(mod_id: int, admin: dict = Depends(require_admin), db: Session = Depends(get_db)):
+    """Reject a pending modification."""
+    mod = db.query(PendingModification).filter(PendingModification.id == mod_id).first()
+    if not mod or mod.status != "pending":
+        raise HTTPException(status_code=404, detail="الطلب غير موجود أو تمت معالجته مسبقاً")
+
+    mod.status = "rejected"
+    db.commit()
+    return {"message": "تم رفض طلب التعديل"}
 
 @router.get("/stats", response_model=StatsResponse)
 def get_stats(db: Session = Depends(get_db)):
